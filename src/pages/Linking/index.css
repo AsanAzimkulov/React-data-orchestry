@@ -1,0 +1,190 @@
+.butterfly-minimap-container {
+  top: 30px;
+  right: 30px !important;
+}
+
+.flow-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.flow-canvas .butterflies-link {
+  stroke: #BFBFBF;
+  stroke-width: 1px;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node {
+  width: 200px;
+  position: absolute;
+  height: 32px;
+  line-height: 28px;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 5px;
+  color: #222;
+  box-shadow: 0 2px 3px 0 rgba(0, 112, 204, 0.06);
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .title {
+  line-height: 32px;
+  height: 32px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  background: #454545;
+  border-radius: 15px 15px 0px 0px;
+  padding: 0 8px;
+  color: #FFF;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .title .remove {
+  cursor: pointer;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .title .add-node {
+  cursor: pointer;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content {
+  height: 32px;
+  width: 200px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #D9D9D9;
+  position: relative;
+  cursor: pointer;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content .targetEndPoint {
+  left: -3px;
+  position: absolute;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content .sourceEndPoint {
+  right: -3px;
+  position: absolute;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content .remove {
+  display: none;
+  cursor: pointer;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content .text .input-text {
+  height: 28px;
+  border: 1px solid #D9D9D9;
+  width: 130px;
+  padding: 0 4px;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content .edit {
+  display: none;
+  cursor: pointer;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content:last-child {
+  border-radius: 0px 0px 15px 15px;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content:hover {
+  display: flex;
+  background: rgba(246, 105, 2, 0.2);
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content:hover .remove {
+  display: contents;
+  cursor: pointer;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content:hover .edit {
+  display: contents;
+  cursor: pointer;
+}
+
+.flow-canvas .butterfly-wrapper .group-node {
+  width: 200px;
+  position: absolute;
+}
+
+.flow-canvas .butterfly-wrapper .group-node .title {
+  line-height: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: space-between;
+  background: #F66902;
+  border-radius: 15px 15px 0px 0px;
+  padding: 0 8px;
+  color: #FFF;
+}
+
+.flow-canvas .butterfly-wrapper .group-node .title .title-text input {
+  width: 140px;
+  color: #222;
+  height: 28px;
+  border: 1px solid #D9D9D9;
+}
+
+.flow-canvas .butterfly-wrapper .group-node .title #close {
+  cursor: pointer;
+}
+
+.flow-canvas .butterfly-wrapper .group-node .title .alis-node-edit {
+  cursor: pointer;
+}
+
+.flow-canvas .butterfly-wrapper .group-node .container {
+  display: flex;
+  padding: 8px;
+  justify-content: space-between;
+  border: 1px solid #D9D9D9;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 0px 0px 15px 15px;
+  color: #222;
+}
+
+.flow-canvas .butterfly-wrapper .group-node .container p textarea {
+  min-height: 80px;
+  width: 164px;
+}
+
+.flow-canvas .butterfly-wrapper .group-node .container .alis-node-edit {
+  display: none;
+}
+
+.flow-canvas .butterfly-wrapper .group-node .container:hover {
+  background: rgba(246, 105, 2, 0.2);
+}
+
+.flow-canvas .butterfly-wrapper .group-node .container:hover .alis-node-edit {
+  cursor: pointer;
+  display: contents;
+}
+
+.base-node-static .title {
+  justify-content: center !important;
+}
+
+.base-node-static .add {
+  margin-left: auto;
+  font-size: 20px;
+}
+
+.flow-canvas .butterfly-wrapper .base-node-static.relational-section-base-node .content {
+  display: flex !important;
+  justify-content: space-around !important;
+}
+
+.flow-canvas .butterfly-wrapper .base-node-static.relational-section-base-node .content:hover {
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
+.flow-canvas .butterfly-wrapper .base-node-static.group-node .container:hover {
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* .flow-canvas .butterfly-wrapper {
+  top: 0 !important;
+  left: 0 !important;
+} */

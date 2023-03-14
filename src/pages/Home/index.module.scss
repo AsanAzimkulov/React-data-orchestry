@@ -1,0 +1,15 @@
+.wrapper {
+  display: flex;
+  width: 100%;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+  padding: 40px 80px;
+  align-items: flex-start;
+}
+
+.left,
+.right {
+  width: 30%;
+  background-color: rgb(179, 191, 255);
+  border-radius: 20px;
+}

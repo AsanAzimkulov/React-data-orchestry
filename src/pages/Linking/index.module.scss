@@ -1,0 +1,26 @@
+
+.container{
+  height: 100vh;
+  .endpointWrapper{
+    // border-bottom: 1px solid grey;
+    // display: block;
+    // &:last-of-type{
+    //   border-top: none;
+    //   border-bottom: none;
+    // }
+  }
+  .endpoint {
+    width: 100%;
+    display: block;
+
+    .inner{
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      .addButton{
+        margin-left: auto;
+      }
+    }
+  }
+
+}
