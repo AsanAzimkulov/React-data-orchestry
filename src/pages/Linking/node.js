@@ -44,7 +44,7 @@ class BaseNode extends Node {
 
     dom.append(title);
     this._onAddNode(title);
-    this._onRemovedNode(title);
+    this._onRemovedNode(title, true);
   }
 
   _createChildNode(dom) {
@@ -67,12 +67,20 @@ class BaseNode extends Node {
     this._onRemovedNode(childNode);
     this._onEditNode(childNode);
     // 
+
+
     dom.on('click', function (e) {
       if ($(e.target).parents(".title").length !== 1 && !e.target.classList.contains('iconfont')) {
-        console.log($(childNode).index());
-        _this.options.onClickSecondSubNode('second', _this.id, 2);
+        // Declosure
+
+        const subNodeIndex = Array.from(e.target.closest('.relational-section-base-node').querySelectorAll('.content')).indexOf(e.target.closest('.content'));
+
+        _this.options.onClickSecondSubNode('second', _this.id, subNodeIndex);
       }
     })
+
+
+
   }
 
   mounted = () => {
@@ -90,7 +98,7 @@ class BaseNode extends Node {
     }));
   }
 
-  _onRemovedNode(dom) {
+  _onRemovedNode(dom, fullRemove) {
     const _this = this;
     dom.find('.remove').on('click', function () {
       const attr = getAttrObj(this.parentNode.attributes);
@@ -102,7 +110,11 @@ class BaseNode extends Node {
       _this.removeEndpoint(attr['source-id']);
       _this.removeEndpoint(attr['target-id']);
 
-      _this.deleteSubNode('second', _this.id, attr['data-id'])
+      if (fullRemove) {
+        _this.options.deleteNode('second', _this.id, _this.options.parentSectionId);
+      } else {
+        _this.options.deleteSubNode('second', _this.id, attr['data-id']);
+      }
     });
   }
 
@@ -184,10 +196,16 @@ class BaseNode extends Node {
 
   updateNode(index, value) {
     const subNode = $(this.dom).find('.text').eq(index);
-
     subNode.text(value);
-    this.childData[index].name = value;
+    this.options.updateSubNodeC(index, value)
   }
+
+  updateBaseNode(index, value) {
+    const baseNodeTitle = $(this.dom).find('.title span:nth-child(2)').eq(index);
+    baseNodeTitle.text(value);
+    this.options.name = value;
+  }
+
 }
 
 
@@ -236,7 +254,7 @@ class BaseNodeStatic extends Node {
     });
 
     $(dom).find('.add').on('click', function () {
-      _this.emit('customCreateNode', { name: _this.childData.find(({ id }) => id === $(this).parents('.content').attr('data-id')).content });
+      _this.emit('customCreateNode', { name: _this.childData.find(({ id }) => id === $(this).parents('.content').attr('data-id')).content, parentSectionId: $(this).parents('.content').attr('data-id') });
     });
 
     $(dom).find('.content').on('click', function (e) {
@@ -251,7 +269,7 @@ class BaseNodeStatic extends Node {
     const section = $(this.dom).find('.text').eq(index);
 
     section.text(value);
-    this.childData[index].name = value;
+    this.childData[index].content = value;
   }
 
   mounted = () => {

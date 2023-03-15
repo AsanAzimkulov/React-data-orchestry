@@ -17,7 +17,10 @@ import { useSelector } from 'react-redux';
 import { selectSecondNodes } from '../../store/slices/nodes/selectors';
 import { INITIAL_FIRST_NODES } from '../../store/slices/nodes';
 
-const SecondBlockForm = ({ activeSubNodeInfo, onSubmit }) => {
+const SecondBlockForm = ({
+  activeSubNodeInfo = { variant: 'second', id: null, subNodeIndex: null },
+  onSubmit,
+}) => {
   const initialCheckboxes = [
     { value: 'Обязательно или нет', checked: false },
     { value: 'Уникальное', checked: false },
@@ -33,36 +36,39 @@ const SecondBlockForm = ({ activeSubNodeInfo, onSubmit }) => {
     { value: 'Исключить из эскпорта', checked: false },
   ];
   const selectValues = [
-    "self::TYPE_TEXT => 'Текст'",
-    "self::TYPE_BOOK => 'Связь со справочником'",
-    "self::TYPE_BOOK_TAGS => 'Связь со справочником (теги)'",
-    "self::TYPE_BOOK_TAGS_FREE => 'Связь со справочником тегами (Свободный ввод)'",
-    "self::TYPE_TAGS_FREE => 'Тэги свободный ввод',",
-    "self::TYPE_DATE => 'Дата'",
-    "self::TYPE_DATETIME => 'Дата и время'",
-    "self::TYPE_DROPDOWN => 'Выпадающий список'",
-    "self::TYPE_NUMBER => 'Номер'",
-    "self::TYPE_FILE => 'Файл'",
-    "self::TYPE_DROPZONE => 'Dropzone'",
-    "self::TYPE_BIG_TEXT => 'Большое текстовое поле'",
-    "self::TYPE_BIG_TEXT_TAGS => 'Большое текстовое поле с тегами'",
-    "self::TYPE_BIG_TEXT_TAGS_NO_EDIT => 'Большое текстовое поле с тегами (без редактора)'",
-    "self::TYPE_CHECKBOX => 'Чекбокс'",
-    "self::TYPE_MULTIPLE => 'Мультиполе'",
-    "self::TYPE_GANTA => 'GANTA'",
-    "self::TYPE_SINGLE_PHOTO => 'Одиночное фото'",
-    "self::TYPE_DYNAMIC_FORM => 'Динамическая форма'",
-    "self::TYPE_COLOR => 'Цвет'",
-    "self::TYPE_BUTTONS_LIST => 'Кнопочный список'",
+    'Текст',
+    'Связь со справочником',
+    'Связь со справочником (теги)',
+    'Связь со справочником тегами (Свободный ввод)',
+    'Тэги свободный ввод,',
+    'Дата',
+    'Дата и время',
+    'Выпадающий список',
+    'Номер',
+    'Файл',
+    'Dropzone',
+    'Большое текстовое поле',
+    'Большое текстовое поле с тегами',
+    'Большое текстовое поле с тегами (без редактора)',
+    'Чекбокс',
+    'Мультиполе',
+    'GANTA',
+    'Одиночное фото',
+    'Динамическая форма',
+    'Цвет',
+    'Кнопочный список',
   ];
-  console.log('form', activeSubNodeInfo);
-  const [selectFieldType, setSelectFieldType] = useState(selectValues[0]);
+
   const nodes = useSelector(selectSecondNodes);
 
   const activeSubNode =
     nodes[activeSubNodeInfo.id - INITIAL_FIRST_NODES].data.content[
       activeSubNodeInfo.subNodeIndex
     ] || {};
+
+  const [selectFieldType, setSelectFieldType] = useState(
+    activeSubNode.fieldType || selectValues[0],
+  );
 
   const [name, setName] = useState(activeSubNode.content || '');
 
@@ -161,12 +167,11 @@ const SecondBlockForm = ({ activeSubNodeInfo, onSubmit }) => {
         onClick={() =>
           onSubmit(
             activeSubNodeInfo.id,
-            nodes[activeSubNodeInfo.id - INITIAL_FIRST_NODES].data.content.findIndex(
-              (subNode) => subNode.id == activeSubNodeInfo[activeSubNodeInfo.subNodeIndex],
-            ),
+            activeSubNodeInfo.subNodeIndex,
             activeSubNodeInfo.variant,
             name,
             nameEng,
+            selectFieldType,
             selectDimension,
             checkboxes,
           )

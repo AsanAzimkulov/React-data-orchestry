@@ -12,7 +12,7 @@ import style from './index.module.scss';
 import { useSelector } from 'react-redux';
 import { selectReferenceSections } from '../../store/slices/sections/selectors';
 
-const FirstBlockForm = ({ activeSectionId, onSubmit }) => {
+const FirstBlockForm = ({ activeSectionId, onSubmit}) => {
   const initialCheckboxes = [
     { value: 'Видимость поиска', checked: false },
     { value: 'Показ суммы у таблицы', checked: false },
@@ -89,7 +89,7 @@ const FirstBlockForm = ({ activeSectionId, onSubmit }) => {
           </FormGroup>
         ))}
       </div>
-      <Button onClick={() => onSubmit(name, nameEng, checkboxes)}>Применить</Button>
+      <Button onClick={() => onSubmit(name, nameEng, checkboxes, activeSection.childNodesIds)}>Применить</Button>
     </>
   );
 };

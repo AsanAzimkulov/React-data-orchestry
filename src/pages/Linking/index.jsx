@@ -23,11 +23,23 @@ import './iconfont.css';
 import 'butterfly-dag/dist/index.css';
 import { BaseNode } from './node';
 import { BaseNodeStatic } from './node';
-import { editSection, sectionsSlice } from '../../store/slices/sections';
+import {
+  addSectionChildNode,
+  editSection,
+  removeSectionChildNode,
+} from '../../store/slices/sections';
 import BaseModal from '../../components/Modal';
 import FirstBlockForm from '../../components/FirstBlockForm';
-import { addNode, addSubNode, deleteSubNode, editSubNode } from '../../store/slices/nodes';
+import {
+  addNode,
+  addSubNode,
+  deleteNode,
+  deleteSubNode,
+  editNode,
+  editSubNode,
+} from '../../store/slices/nodes';
 import SecondBlockForm from '../../components/SecondBlockForm';
+import { selectSecondNodes } from '../../store/slices/nodes/selectors';
 
 const Linking = () => {
   const dispatch = useDispatch();
@@ -42,7 +54,7 @@ const Linking = () => {
   const referenceSections = useSelector(selectReferenceSections);
   const [activeSection, setActiveSection] = useState(referenceSections[0]);
 
-  const [activeSubNode, setActiveSubNode] = useState({});
+  const [activeSubNode, setActiveSubNode] = useState(null);
 
   const [data, setData] = useState({
     nodes: [
@@ -64,6 +76,7 @@ const Linking = () => {
           setOpenFirstModal(true);
           setCurrentForm(1);
         },
+
         Class: BaseNodeStatic,
       },
     ],
@@ -72,6 +85,9 @@ const Linking = () => {
   const canvasRef = useState(null);
 
   // Первая загрузка
+
+  // const secondNodes = useSelector(selectSecondNodes);
+
   useEffect(() => {
     let root = document.getElementById('dag-canvas');
     let canvas = canvasRef.current;
@@ -85,7 +101,22 @@ const Linking = () => {
       moveable: true,
       addNode(variant, node) {
         dispatch(
-          addNode({ variant: 'second', node: { data: node.data, id: node.id, name: node.name } }),
+          addNode({
+            variant: 'second',
+            node: {
+              data: node.data,
+              id: node.id,
+              name: node.name,
+              parentSectionId: node.parentSectionId,
+            },
+          }),
+        );
+        dispatch(
+          addSectionChildNode({
+            block: 'reference',
+            index: node.parentSectionId,
+            id: node.id,
+          }),
         );
       },
       addSubNode(variant, id, subNode) {
@@ -94,14 +125,31 @@ const Linking = () => {
       editSubNode(variant, id, subNodeIndex, subNode) {
         dispatch(editSubNode({ variant, id, subNodeIndex, subNode }));
       },
-      deleteSubNode(variant, id, subNodeId) {
+
+      deleteSubNode(variant, id, subNodeId, parentId) {
         dispatch(deleteSubNode({ variant, id, subNodeId }));
       },
+      deleteNode(variant, id, parentId) {
+        console.log(id, parentId);
+        dispatch(
+          removeSectionChildNode({
+            block: 'reference',
+            parentId,
+            id,
+          }),
+        );
 
+        dispatch(
+          deleteNode({
+            variant,
+            id: parentId,
+          }),
+        );
+      },
       onClickSecondSubNode(variant, id, subNodeIndex) {
-        setOpenSecondModal(true);
-        setActiveSubNode({ variant, id, subNodeIndex });
         setCurrentForm(2);
+        setActiveSubNode({ variant, id, subNodeIndex });
+        setOpenSecondModal(true);
       },
 
       theme: {
@@ -117,19 +165,34 @@ const Linking = () => {
   }, []);
   //
 
-  function saveFirstBlockSettings(name, nameEng, checkboxes) {
+  function saveFirstBlockSettings(name, nameEng, checkboxes, childNodesIds) {
     dispatch(
       editSection({
-        name: name,
-        nameEng: nameEng,
-        index: activeSection.id,
         block: 'reference',
-        options: { checkboxes },
+        index: activeSection.id,
+        section: {
+          options: { checkboxes },
+          name,
+          nameEng,
+        },
       }),
     );
+
     let canvas = window.canvasRef;
     const node = canvas.getDataMap().nodes[0];
+    console.log(activeSection.id);
     node.updateNode(activeSection.id, name);
+
+    if (childNodesIds.length !== 0) {
+      let canvas = window.canvasRef;
+
+      childNodesIds.forEach((id) => {
+        const node = canvas.getDataMap().nodes[id];
+        node.updateBaseNode(activeSection.id, name);
+
+        dispatch(editNode({ variant: 'second', id, node: { name } }));
+      });
+    }
 
     handleFirstModalClose();
   }
@@ -140,6 +203,7 @@ const Linking = () => {
     variant,
     name,
     nameEng,
+    fieldType,
     dimension,
     checkboxes,
   ) {
@@ -150,8 +214,9 @@ const Linking = () => {
         subNodeIndex,
         variant,
         subNode: {
-          name,
+          content: name,
           nameEng: nameEng,
+          fieldType,
           checkboxes,
           dimension,
         },

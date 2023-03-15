@@ -11,11 +11,21 @@ export const nodesSlice = createSlice({
     addNode(state, action) {
       state[action.payload.variant].push(action.payload.node);
     },
+    deleteNode(state, action) {
+      console.log('store', action.payload)
+
+      state[action.payload.variant].splice(action.payload.id - INITIAL_FIRST_NODES, 1);
+    },
+    editNode(state, action) {
+      state[action.payload.variant][action.payload.id - INITIAL_FIRST_NODES] = {
+        ...state[action.payload.variant][action.payload.id - INITIAL_FIRST_NODES],
+        node: action.payload.node
+      }
+    },
     addSubNode(state, action) {
       state[action.payload.variant][action.payload.id - INITIAL_FIRST_NODES].data.content.push(action.payload.subNode);
     },
     editSubNode(state, action) {
-      console.log('store',action.payload)
       state[action.payload.variant][action.payload.id - INITIAL_FIRST_NODES].data.content[action.payload.subNodeIndex] = { ...state[action.payload.variant][action.payload.id - INITIAL_FIRST_NODES].data.content[action.payload.subNodeIndex], ...action.payload.subNode };
     },
     deleteSubNode(state, action) {
@@ -26,4 +36,4 @@ export const nodesSlice = createSlice({
   }
 });
 
-export const { addNode, addSubNode, editSubNode, deleteSubNode } = nodesSlice.actions;
+export const { addNode, deleteNode, editNode, addSubNode, editSubNode, deleteSubNode } = nodesSlice.actions;

@@ -5,17 +5,22 @@ export const sectionsSlice = createSlice({
   initialState: {},
   reducers: {
     changeSections: (state, action) => {
-      state[action.payload.block] = action.payload[action.payload.block];
+      state[action.payload.block] = action.payload[action.payload.block].map(x => ({ ...x, childNodesIds: [] }));
+    },
+    addSectionChildNode: (state, action) => {
+      state[action.payload.block][action.payload.index].childNodesIds.push(action.payload.id);
+    },
+    removeSectionChildNode: (state, action) => {
+      console.log(action.payload);
+      
+      const index = state[action.payload.block].findIndex(section => section.id == action.payload.parentId);
+      console.log(action.payload, index)
+      state[action.payload.block][index].childNodesIds = state[action.payload.block][index].childNodesIds.filter(id => id != action.payload.id);
     },
     editSection: (state, action) => {
-      const section = state[action.payload.block][action.payload.index];
-      console.log(action, section)
-
-      section.name = action.payload.name;
-      section.nameEng = action.payload.nameEng;
-      section.options = action.payload.options;
+      state[action.payload.block][action.payload.index] = { ...state[action.payload.block][action.payload.index], ...action.payload.section }
     }
   }
 });
 
-export const { changeSections, editSection } = sectionsSlice.actions;
+export const { changeSections, editSection, addSectionChildNode, removeSectionChildNode } = sectionsSlice.actions;
