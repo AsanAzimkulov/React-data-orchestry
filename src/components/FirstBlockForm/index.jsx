@@ -4,15 +4,20 @@ import {
   TextField,
   FormGroup,
   FormControlLabel,
-  Checkbox,
   Button,
+  useTheme,
 } from '@material-ui/core';
+
+import CustomCheckbox from '../CustomCheckbox';
 
 import style from './index.module.scss';
 import { useSelector } from 'react-redux';
 import { selectReferenceSections } from '../../store/slices/sections/selectors';
+import { SmallButtonWide } from '../SmallButton';
 
-const FirstBlockForm = ({ activeSectionId, onSubmit}) => {
+const FirstBlockForm = ({ activeSectionId, onSubmit }) => {
+  const theme = useTheme();
+
   const initialCheckboxes = [
     { value: 'Видимость поиска', checked: false },
     { value: 'Показ суммы у таблицы', checked: false },
@@ -46,50 +51,102 @@ const FirstBlockForm = ({ activeSectionId, onSubmit}) => {
       ? activeSection.options.checkboxes
       : initialCheckboxes,
   );
-
+  console.log(theme);
   return (
     <>
-      <Typography variant='h3' component='h3'>
+      <Typography variant='h2' style={{ marginBottom: 18 }}>
         Настройки:
       </Typography>
-      <TextField
-        label='Название раздела'
-        value={name}
-        onInput={(e) => setName(e.target.value)}
-        fullWidth
-      />
-      <TextField
-        label='Название на Английском'
-        value={nameEng}
-        onInput={(e) => setNameEng(e.target.value)}
-        fullWidth
-      />
-      <div className={style.checkboxes}>
-        {checkboxes.map(({ value, checked }, index) => (
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  label={value}
-                  checked={checked}
-                  onChange={({ target }) =>
-                    setCheckboxes((prev) =>
-                      prev.map((item, id) => {
-                        if (id === index) {
-                          return { value, checked: target.checked };
-                        }
-                        return item;
-                      }),
-                    )
-                  }
-                />
-              }
-              label={value}
-            />
-          </FormGroup>
-        ))}
+      <div className={style.inputs}>
+        <div className={style.inputFirst}>
+          <Typography
+            variant='subtitle1'
+            style={{ color: 'rgba(255, 255, 255, 0.6)', marginBottom: '5px', display: 'block' }}>
+            Название справочника:
+          </Typography>
+          <TextField
+            value={name}
+            onInput={(e) => setName(e.target.value)}
+            placeholder={'Введите'}
+            fullWidth
+          />
+        </div>
+        <div className={style.inputSecond}>
+          <Typography
+            variant='subtitle1'
+            style={{ color: 'rgba(255, 255, 255, 0.6)', marginBottom: '5px', display: 'block' }}>
+            Название на английском:
+          </Typography>
+          <TextField
+            value={nameEng}
+            onInput={(e) => setNameEng(e.target.value)}
+            placeholder={'Введите'}
+            fullWidth
+          />
+        </div>
       </div>
-      <Button onClick={() => onSubmit(name, nameEng, checkboxes, activeSection.childNodesIds)}>Применить</Button>
+      <div className={style.checkboxes}>
+        <div className={style.checkBoxesLeft}>
+          {checkboxes
+            .slice(0, Math.floor(checkboxes.length / 2))
+            .map(({ value, checked }, index) => (
+              <FormGroup className={style.checkbox}>
+                <FormControlLabel
+                  control={
+                    <CustomCheckbox
+                      label={value}
+                      checked={checked}
+                      onChange={({ target }) =>
+                        setCheckboxes((prev) =>
+                          prev.map((item, id) => {
+                            if (value === item.value) {
+                              return { value, checked: target.checked };
+                            }
+                            return item;
+                          }),
+                        )
+                      }
+                    />
+                  }
+                  label={value}
+                />
+              </FormGroup>
+            ))}
+        </div>
+        <div className={style.checkBoxesRight}>
+          {checkboxes
+            .slice(Math.floor(checkboxes.length / 2))
+            .slice(0, Math.floor(checkboxes.length / 2))
+            .map(({ value, checked }, index) => (
+              <FormGroup className={style.checkbox}>
+                <FormControlLabel
+                  control={
+                    <CustomCheckbox
+                      label={value}
+                      checked={checked}
+                      onChange={({ target }) =>
+                        setCheckboxes((prev) =>
+                          prev.map((item, id) => {
+                            if (value === item.value) {
+                              return { value, checked: target.checked };
+                            }
+                            return item;
+                          }),
+                        )
+                      }
+                    />
+                  }
+                  label={value}
+                />
+              </FormGroup>
+            ))}
+        </div>
+      </div>
+      <SmallButtonWide
+        onClick={() => onSubmit(name, nameEng, checkboxes, activeSection.childNodesIds)}
+        style={{ marginLeft: 'auto', display: 'block' }}>
+        Сохранить
+      </SmallButtonWide>
     </>
   );
 };

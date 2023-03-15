@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { useHistory } from 'react-router-dom';
 
-import { Button } from '@material-ui/core';
+import { Button, Typography, useTheme } from '@material-ui/core';
 
 import FormItem from './../../components/FormItem';
 import FormItems from './../../components/FormItems';
@@ -11,15 +11,24 @@ import { useDispatch } from 'react-redux';
 import { changeSections } from '../../store/slices/sections';
 
 const Home = () => {
-  const [referenceSections, setReferenceSections] = useState(['Название раздела']);
-  const [mainSections, setMainSections] = useState(['Название раздела']);
+  const theme = useTheme();
+
+  const columnStyle = {
+    background: theme.palette.primary.dark,
+    border: `2px solid ${theme.palette.accent.main}`,
+    padding: '20px',
+    marginBottom: '22px',
+  };
+
+  const [referenceSections, setReferenceSections] = useState([]);
+  const [mainSections, setMainSections] = useState([]);
   const dispatch = useDispatch();
   const history = useHistory();
 
   const saveSections = () => {
     dispatch(
       changeSections({
-        reference: referenceSections.slice(1).map((name, id) => ({ name, options: {}, id })),
+        reference: referenceSections.map((name, id) => ({ name, options: {}, id })),
         block: 'reference',
       }),
     );
@@ -28,22 +37,32 @@ const Home = () => {
   };
   return (
     <div className={style['container']}>
-      <h2 className={style['title']}>Создание Разделов</h2>
+      <Typography variant='h1' hidden>
+        Создание справочников и разделов
+      </Typography>
       <div className={style['wrapper']}>
-        <div className={style['left']}>
-          <h3 className={style['subtitle']}>Справочные</h3>
-          <FormItems items={referenceSections} setItems={setReferenceSections} />
+        <div className={style['two-columns']}>
+          <div className={style['left']} style={columnStyle}>
+            <Typography variant='h2' style={{ marginBottom: 17 }}>
+              Справочники
+            </Typography>
+            <FormItems
+              items={referenceSections}
+              setItems={setReferenceSections}
+              defaultValue={'Справочник'}
+            />
+          </div>
+          <div className={style['right']} style={columnStyle}>
+            <Typography variant='h2' style={{ marginBottom: 17 }}>
+              Основные разделы
+            </Typography>
+            <FormItems items={mainSections} setItems={setMainSections} defaultValue={'Раздел'} />
+          </div>
         </div>
-        <div className={style['right']}>
-          <h3 className={style['subtitle']}>Основные</h3>
-          <FormItems items={mainSections} setItems={setMainSections} />
-        </div>
+        <Button onClick={saveSections} style={{ marginLeft: 'auto', display: 'block' }}>
+          К следующему шагу
+        </Button>
       </div>
-      <Button variant='contained' color='primary' onClick={saveSections}>
-        {/* <Link to='/linking' style={{ textDecoration: 'none', color: 'inherit' }}> */}
-        Следующая страница
-        {/* </Link> */}
-      </Button>
     </div>
   );
 };

@@ -1,4 +1,35 @@
 
-  .checkBoxes{
-    margin-top: 20px;
-  }
+.checkboxes{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.checkbox {
+  margin-bottom: 14px;
+}
+
+.checkBoxesLeft{
+  margin-right: 18px;
+  width: 100%;
+}
+
+.checkBoxesRight{
+  width: 100%;
+}
+.inputs{
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.inputFirst{
+  margin-right: 18px !important;
+  width: 100%;
+}
+.inputSecond{
+  width: 100%;
+}
+
+.input{
+  background: white;
+}
