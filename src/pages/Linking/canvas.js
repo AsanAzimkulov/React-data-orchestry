@@ -15,17 +15,18 @@ class RelationalSectionsCanvas extends Canvas {
       }
     });
 
-    this.on('customCreateNode', function ({ name, parentSectionId }) {
+    this.on('customCreateNode', function ({ name, parentSectionId, cords }) {
       const canvas = this;
       const nodes = this.getDataMap().nodes;
       const mainNode = nodes[0];
+      console.log(cords)
 
       const node = {
         id: nodes.length.toString(),
         name: name,
         parentSectionId,
-        top: window.innerHeight / 3 - mainNode.getHeight(),
-        left: 500,
+        top: cords.y || 221,
+        left: cords.x || 93,
         generateChildData(name) {
           const nodes = canvas.getDataMap().nodes;
           let lastIdSection = 3 * (nodes.reduce((acc, cur) => {
@@ -75,6 +76,7 @@ class RelationalSectionsCanvas extends Canvas {
       };
 
       _this.addNode(node);
+
       args[0].addNode('second', node);
       // setTimeout(() => console.log(_this.getDataMap(), 10000));
     });

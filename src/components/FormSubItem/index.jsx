@@ -5,25 +5,12 @@ import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CircleButton from '../CircleButton';
 
-const FormItem = ({ value, onRemove, index, active, onSelect }) => {
+const FormSubItem = ({ value, onRemove, index }) => {
   const theme = useTheme();
 
-  const handleClick = () => {
-    if (!active) onSelect(index);
-  };
   const [inputValue, setInputValue] = useState(value);
   return (
     <div className={styles.container}>
-      <div
-        className={styles.text}
-        onClick={handleClick}
-        style={{
-          backgroundColor: active
-            ? theme.palette.secondary.main
-            : theme.palette.primary.moreLighter,
-        }}>
-        <Typography variant={'body1'}>{value}</Typography>
-      </div>
       <CircleButton onClick={() => onRemove(index)} color={theme.palette.primary.lighter}>
         <svg
           width='10'
@@ -52,8 +39,11 @@ const FormItem = ({ value, onRemove, index, active, onSelect }) => {
           />
         </svg>
       </CircleButton>
+      <div className={styles.text}>
+        <Typography variant={'body1'}>{value}</Typography>
+      </div>
     </div>
   );
 };
 
-export default FormItem;
+export default FormSubItem;

@@ -1,18 +1,15 @@
 import { styled, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import FormItem from '../FormItem';
+import FormSubItem from '../FormSubItem';
 import { SmallButton } from '../SmallButton';
 import style from './index.module.scss';
 
-const FormItems = ({ items, setItems, defaultValue, onRemove, onSelect, onAdd }) => {
+const FormSubItems = ({ items, onAdd, onRemove, defaultValue }) => {
   const [value, setValue] = useState('');
 
   const handleAdd = (value) => {
-    onAdd({
-      name: value || defaultValue + ' ' + (items.length + 1),
-      active: items.length === 0 ? true : false,
-    });
-
+    onAdd(value || defaultValue + ' ' + (items.length + 1));
     setValue('');
   };
 
@@ -27,12 +24,10 @@ const FormItems = ({ items, setItems, defaultValue, onRemove, onSelect, onAdd })
         />
         <SmallButton onClick={() => handleAdd(value.trim())}>Добавить</SmallButton>
       </div>
-      {items.map(({ name, active }, index) => (
-        <FormItem
-          active={active}
-          value={name}
-          onSelect={onSelect}
-          onRemove={onRemove}
+      {items.map((sectionName, index) => (
+        <FormSubItem
+          value={sectionName}
+          onRemove={(index) => onRemove(index)}
           index={index}
           key={Math.random()}
         />
@@ -41,4 +36,4 @@ const FormItems = ({ items, setItems, defaultValue, onRemove, onSelect, onAdd })
   );
 };
 
-export default FormItems;
+export default FormSubItems;

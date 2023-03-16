@@ -69,7 +69,7 @@
 
 .flow-canvas .addInput {
   width: 200px;
-  padding: 12px 16px;
+  padding: 9px 12px 8px 12px;
   display: flex;
   justify-content: space-between;
 }
@@ -96,6 +96,38 @@
   cursor: pointer;
   background: none;
   border: none;
+  display: flex;
+}
+
+.flow-canvas .addInput .caption {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.flow-canvas .addInput .caption {
+  display: none;
+}
+
+.flow-canvas .addInput.noSubnodes .caption {
+  display: none;
+}
+
+.flow-canvas .addInput.noSubnodes .caption {
+  display: block;
+}
+
+.flow-canvas .addInput.noSubnodes {
+  justify-content: flex-start;
+  cursor: pointer;
+}
+
+.flow-canvas .addInput.noSubnodes input {
+  display: none;
+}
+
+.flow-canvas .addInput.noSubnodes .addButton {
+  margin-left: 19px;
+  margin-right: 6px;
+  padding: 0;
 }
 
 .flow-canvas .flow-canvas .butterfly-wrapper .relational-section-base-node.section .content:last-of-type {

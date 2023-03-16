@@ -21,6 +21,7 @@ class BaseNode extends Node {
     this.childData = opts.data.content;
   }
   draw = (opts) => {
+    const _this = this;
     let className = this.options.type;
     let container = $('<div class="relational-section-base-node base-node section"></div>')
       .css('top', opts.top + 'px')
@@ -44,15 +45,30 @@ class BaseNode extends Node {
 
     dom.append(title);
 
-    let addInput = $(`<div class="addInput"><input type="text" placeholder="Название"/><button class="addButton"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    let addInput = $(`<div class="addInput noSubnodes"><input type="text" placeholder="Название"/><button class="addButton"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M9.813 1.4129C9.813 1.19731 9.72735 0.990541 9.57491 0.838092C9.42246 0.685643 9.21569 0.599998 9.0001 0.599998C8.7845 0.599998 8.57774 0.685643 8.42529 0.838092C8.27284 0.990541 8.18719 1.19731 8.18719 1.4129V8.18709H1.413C1.19741 8.18709 0.99064 8.27274 0.838191 8.42519C0.685742 8.57764 0.600098 8.7844 0.600098 9C0.600098 9.21559 0.685742 9.42236 0.838191 9.57481C0.99064 9.72726 1.19741 9.8129 1.413 9.8129H8.18719V16.5871C8.18719 16.8027 8.27284 17.0095 8.42529 17.1619C8.57774 17.3144 8.7845 17.4 9.0001 17.4C9.21569 17.4 9.42246 17.3144 9.57491 17.1619C9.72735 17.0095 9.813 16.8027 9.813 16.5871V9.8129H16.5872C16.8028 9.8129 17.0096 9.72726 17.162 9.57481C17.3145 9.42236 17.4001 9.21559 17.4001 9C17.4001 8.7844 17.3145 8.57764 17.162 8.42519C17.0096 8.27274 16.8028 8.18709 16.5872 8.18709H9.813V1.4129Z" fill="white" fill-opacity="0.9"/>
-    </button>
+    </button><span class="caption">Добавить поле</span>
     </div>`);
 
     dom.append(addInput);
 
+    dom.find('.addInput').on('click', function (e) {
+      if (this.classList.contains('noSubnodes')) {
+        this.classList.remove('noSubnodes');
+
+
+        const subnodeNumber = _this.dom.querySelectorAll('.content').length + 1
+        const name = 'Пункт раздела ' + subnodeNumber;
+
+        _this._onAddNode(name);
+      }
+    });
+
     dom.find('.addButton').on('click', function (e) {
+      e.target.closest('.addInput').classList.remove('noSubnodes');
       const value = e.target.closest('.addInput').querySelector('input').value;
+      e.target.closest('.addInput').querySelector('input').value = '';
+
       _this._onAddNode(value);
     });
     // this._createChildNode(addInput);
@@ -72,6 +88,7 @@ class BaseNode extends Node {
         <div class="sourceEndPoint butterflie-circle-endpoint" id="${sourceNodeId}"></div>
       </div>`);
     });
+
 
 
     let childNode = dom.find('.content');
@@ -127,6 +144,9 @@ class BaseNode extends Node {
         _this.options.deleteNode('second', _this.id, _this.options.parentSectionId);
       } else {
         _this.options.deleteSubNode('second', _this.id, attr['data-id']);
+        if (!_this.dom.querySelector('.content')) {
+          _this.dom.querySelector('.addInput').classList.add('noSubnodes');
+        }
       }
     });
   }
@@ -255,7 +275,7 @@ class BaseNodeStatic extends Node {
     const _this = this;
     $.each(this.childData, (i, { id, content, sourceNodeId, targetNodeId }) => {
       $(this.options.slotSelector).append(`
-  <div class="content" data-id="${id}" source-id="${sourceNodeId}" target-id="${targetNodeId}" >
+  <div class="content ${i === 0 ? 'active' : ''}" data-id="${id}" source-id="${sourceNodeId}" target-id="${targetNodeId}" >
         <div class="targetEndPoint butterflie-circle-endpoint" id="${targetNodeId}"></div>
         <div class="first">
         <span class="check"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -282,6 +302,63 @@ class BaseNodeStatic extends Node {
         <div class="sourceEndPoint butterflie-circle-endpoint" id="${sourceNodeId}"></div>
       </div > `);
     });
+
+    // Positioning of nodes
+    const nodeWidth = 200;
+    const nodeOrdinaryHeight = 300;
+    const horizontalShift = 248;
+    const verticalShift = 348;
+
+
+
+    const initialCords = {
+      x: 91,
+      y: 223,
+    }
+
+    const cords = {
+      x: initialCords.x - horizontalShift,
+      y: initialCords.y,
+    }
+
+    function calculateCords() {
+
+      const canvasWidth = document.querySelector('.butterfly-selected-canvas').getAttribute('width');
+      const canvasHeight = document.querySelector('.butterfly-selected-canvas').getAttribute('height');
+
+      if ((cords.x + horizontalShift + nodeWidth) > canvasWidth) {
+        cords.x = initialCords.x;
+        cords.y += verticalShift;
+        return {
+          x: cords.x,
+          y: cords.y
+        }
+      }
+
+      if ((cords.y + verticalShift) > canvasHeight) {
+        cords.y = initialCords.y;
+        cords.x = initialCords.x;
+        return {
+          x: cords.x,
+          y: cords.y
+        }
+      }
+
+      cords.x += horizontalShift;
+
+      return {
+        x: cords.x,
+        y: cords.y
+      }
+    }
+
+    // 
+
+    _this.options.rawNodes.forEach((rawNodesForSection, i) => {
+      rawNodesForSection.forEach(rawNode => {
+        _this.emit('customCreateNode', { name: rawNode, parentSectionId: i, cords: calculateCords() });
+      })
+    })
 
     $(dom).find('.add').on('click', function () {
       const name = _this.childData.find(({ id }) => id === $(this).parents('.content').attr('data-id')).content;

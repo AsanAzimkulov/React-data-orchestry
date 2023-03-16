@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 
 import { useHistory } from 'react-router-dom';
 
-import { Button, Typography, useTheme } from '@material-ui/core';
+import { Button, setRef, Typography, useTheme } from '@material-ui/core';
 
 import FormItem from './../../components/FormItem';
 import FormItems from './../../components/FormItems';
 import style from './index.module.scss';
 import { useDispatch } from 'react-redux';
 import { changeSections } from '../../store/slices/sections';
+import FormSubItems from '../../components/FormSubItems';
+import { loadRawNodes } from '../../store/slices/nodes';
 
 const Home = () => {
   const theme = useTheme();
@@ -21,17 +23,70 @@ const Home = () => {
   };
 
   const [referenceSections, setReferenceSections] = useState([]);
-  const [mainSections, setMainSections] = useState([]);
+  const [activeSection, setActiveSection] = useState(0);
+  const [subnodes, setSubnodes] = useState([]);
+
+  const onRemoveSection = (index) => {
+    setActiveSection(0);
+    setSubnodes((prev) => prev.filter((_, i) => index !== i));
+    setReferenceSections((prev) =>
+      prev
+        .filter((_, i) => index !== i)
+        .map((section, i) => {
+          if (i === 0) {
+            return { name: section.name, active: true };
+          }
+          return { name: section.name, active: false };
+        }),
+    );
+  };
+
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const onSelectSection = (index) => {
+    setReferenceSections((prev) =>
+      prev.map((item, i) => {
+        if (index === i) {
+          return { name: item.name, active: true };
+        }
+        return { name: item.name, active: false };
+      }),
+    );
+    setActiveSection(index);
+  };
+
+  const onAddSection = (section) => {
+    setReferenceSections((prev) => [...prev, section]);
+    setSubnodes((prev) => [...prev, []]);
+  };
+
+  const onAddSubnode = (value) => {
+    setSubnodes((prev) =>
+      prev.map((x, i) => {
+        if (i === activeSection) {
+          return [...prev[activeSection], value];
+        }
+        return x;
+      }),
+    );
+  };
+
+  const onRemoveSubnode = (index) => {
+    setSubnodes((prev) =>
+      prev.map((x, i) => (index === i ? prev[index].filter((_, i) => i !== index) : x)),
+    );
+  };
 
   const saveSections = () => {
     dispatch(
       changeSections({
-        reference: referenceSections.map((name, id) => ({ name, options: {}, id })),
+        reference: referenceSections.map(({ name }, id) => ({ name, options: {}, id })),
         block: 'reference',
       }),
     );
+
+    dispatch(loadRawNodes(subnodes));
 
     setTimeout(() => history.push('/linking'), 300);
   };
@@ -47,8 +102,11 @@ const Home = () => {
               Справочники
             </Typography>
             <FormItems
+              onSelect={onSelectSection}
+              onRemove={onRemoveSection}
+              onAdd={onAddSection}
               items={referenceSections}
-              setItems={setReferenceSections}
+              setItems={onAddSection}
               defaultValue={'Справочник'}
             />
           </div>
@@ -56,7 +114,12 @@ const Home = () => {
             <Typography variant='h2' style={{ marginBottom: 17 }}>
               Основные разделы
             </Typography>
-            <FormItems items={mainSections} setItems={setMainSections} defaultValue={'Раздел'} />
+            <FormSubItems
+              items={subnodes.length === 0 ? [] : subnodes[activeSection]}
+              onAdd={onAddSubnode}
+              onRemove={onRemoveSubnode}
+              defaultValue={'Раздел'}
+            />
           </div>
         </div>
         <Button onClick={saveSections} style={{ marginLeft: 'auto', display: 'block' }}>

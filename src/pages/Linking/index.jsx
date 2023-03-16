@@ -40,11 +40,13 @@ import {
   editSubNode,
 } from '../../store/slices/nodes';
 import SecondBlockForm from '../../components/SecondBlockForm';
-import { selectSecondNodes } from '../../store/slices/nodes/selectors';
+import { selectRawNodes, selectSecondNodes } from '../../store/slices/nodes/selectors';
 
 const Linking = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const rawNodes = useSelector(selectRawNodes);
+
   const [openFirstModal, setOpenFirstModal] = React.useState(false);
   const [openSecondModal, setOpenSecondModal] = React.useState(false);
 
@@ -68,6 +70,7 @@ const Linking = () => {
         top: 264,
         left: 172,
         slotSelector: '#' + sideBarId,
+        rawNodes,
         data: {
           content: referenceSections.map(({ name }, index) => ({
             id: index.toString(),
@@ -81,7 +84,9 @@ const Linking = () => {
           setOpenFirstModal(true);
           setCurrentForm(1);
         },
-        setActiveSection(index) {},
+        setActiveSection(index) {
+          
+        },
         Class: BaseNodeStatic,
       },
     ],
@@ -163,8 +168,18 @@ const Linking = () => {
       },
     });
     window.canvasRef = canvas;
+
     canvas.draw(data, () => {
-      canvas.focusCenterWithAnimate();
+      canvas.setGridMode(true, {
+        isAdsorb: false,
+        theme: {
+          shapeType: 'circle',
+          gap: 30, //
+          background: '#1A1D23',
+          circleRadiu: 3,
+          circleColor: 'rgba(255, 255, 255, 0.2)',
+        },
+      });
     });
   }, []);
   //
