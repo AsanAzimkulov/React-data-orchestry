@@ -63,7 +63,7 @@ class RelationalSectionsCanvas extends Canvas {
           return args[0].onClickSecondSubNode(variant, id, subNodeId)
         },
         updateSubNodeC(index, value) {
-          const subNode = canvas.getNode(index);
+          const subNode = _this.getNode(index + '');
           subNode.content = value;
         },
         data: {
@@ -76,7 +76,7 @@ class RelationalSectionsCanvas extends Canvas {
 
       _this.addNode(node);
       args[0].addNode('second', node);
-      setTimeout(() => console.log(_this.getDataMap(), 5000));
+      // setTimeout(() => console.log(_this.getDataMap(), 10000));
     });
   }
 

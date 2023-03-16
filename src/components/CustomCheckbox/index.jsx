@@ -11,7 +11,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-// !!! НАДО ПОМЕНЯТЬ ЦВЕТ В ПОЛЯХ ВВОДА МОДАЛКИ, ЭТИМ СПОСОБОМ.
 
 const CustomCheckbox = (props) => {
   const classes = useStyles();

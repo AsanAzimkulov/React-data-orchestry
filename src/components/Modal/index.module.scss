@@ -2,7 +2,7 @@
   width: 618px;
   position: absolute;
   top: 21.11vh;
-  margin-bottom: 100px;
+  margin-bottom: 50vh;
 
   @media(max-width: 1560px){
     top: 10vh;
@@ -18,9 +18,5 @@
   margin-left: auto !important;
   float: right;
 }
-.scrollSpace{
-  position: relative;
-  height: 140%;
-  pointer-events: none;
-}
+
 

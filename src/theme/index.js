@@ -82,14 +82,19 @@ const theme = createTheme({
 
       }
     },
+    MuiSelect: {
+      disableUnderline: true,
+    },
     MuiCheckbox: {
       disableRipple: true
     }
+
   },
   overrides: {
     MuiCssBaseline: {
       '@global': {
         '@font-face': 'Inter',
+
       },
     },
     MuiButton: {
@@ -122,6 +127,21 @@ const theme = createTheme({
     },
     MuiCheckbox: {
       input: {
+      }
+    },
+    MuiSelect: {
+      select: {
+        padding: '10px 12px',
+        disableUnderline: true,
+        padding: '10px 12px',
+        borderRadius: '6px',
+        backgroundColor: palette.primary.lighter,
+        ...typography.caption,
+      },
+    },
+    MuiPaper: {
+      root: {
+        backgroundColor: palette.primary.lighter
       }
     }
   }

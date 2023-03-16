@@ -10,17 +10,33 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  useTheme,
 } from '@material-ui/core';
+
+import CustomCheckbox from '../CustomCheckbox';
 
 import style from './index.module.scss';
 import { useSelector } from 'react-redux';
 import { selectSecondNodes } from '../../store/slices/nodes/selectors';
 import { INITIAL_FIRST_NODES } from '../../store/slices/nodes';
+import { SmallButtonWide } from '../SmallButton';
+
+import './mui-overrides.css';
 
 const SecondBlockForm = ({
   activeSubNodeInfo = { variant: 'second', id: null, subNodeIndex: null },
   onSubmit,
 }) => {
+  const theme = useTheme();
+
+  const InputProps = {
+    ...theme.props.MuiTextField.InputProps,
+    style: {
+      ...theme.props.MuiTextField.InputProps.style,
+      backgroundColor: theme.palette.primary.light,
+    },
+  };
+
   const initialCheckboxes = [
     { value: 'Обязательно или нет', checked: false },
     { value: 'Уникальное', checked: false },
@@ -82,88 +98,144 @@ const SecondBlockForm = ({
   const dimensions = new Array(12).fill(null).map((_, i) => i + 1);
 
   return (
-    <>
-      <Typography variant='h3' component='h3'>
+    <div className='secondBlockForm'>
+      <Typography variant='h2' style={{ marginBottom: 18 }}>
         Настройки:
       </Typography>
-      <TextField
-        label='Наименование'
-        value={name}
-        onInput={(e) => setName(e.target.value)}
-        fullWidth
-      />
-      <TextField
-        label='Наименование на Английском'
-        value={nameEng}
-        onInput={(e) => setNameEng(e.target.value)}
-        fullWidth
-        style={{
-          marginBottom: '20px',
-        }}
-      />
-      <div
-        className={style.dropdown}
-        style={{
-          marginBottom: '20px',
-        }}>
-        <FormControl fullWidth>
-          <InputLabel id='second-block-form-dropdown'>Тип поля</InputLabel>
-          <Select
-            labelId='second-block-form-dropdown'
-            id='second-block-form-select'
-            value={selectFieldType}
-            label={'Тип поля'}
-            onChange={(e) => setSelectFieldType(e.target.value)}>
-            {selectValues.map((value) => (
-              <MenuItem value={value}>{value}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <div className={style.inputs}>
+        <div className={style.inputFirst}>
+          <Typography
+            variant='subtitle1'
+            style={{ color: 'rgba(255, 255, 255, 0.6)', marginBottom: '5px', display: 'block' }}>
+            Название Раздела:
+          </Typography>
+          <TextField
+            value={name}
+            onInput={(e) => setName(e.target.value)}
+            placeholder={'Введите'}
+            fullWidth
+          />
+        </div>
+        <div className={style.inputSecond}>
+          <Typography
+            variant='subtitle1'
+            style={{ color: 'rgba(255, 255, 255, 0.6)', marginBottom: '5px', display: 'block' }}>
+            Название на английском:
+          </Typography>
+          <TextField
+            value={nameEng}
+            onInput={(e) => setNameEng(e.target.value)}
+            placeholder={'Введите'}
+            fullWidth
+          />
+        </div>
       </div>
-      <div className={style.dropdownNumber}>
-        {' '}
-        <FormControl fullWidth>
-          <InputLabel id='second-block-form-dropdown-number'>
-            Размер на форме (от 1 до 12)
-          </InputLabel>
-          <Select
-            labelId='second-block-form-dropdown-number'
-            id='second-block-form-select'
-            value={selectDimension}
-            label={'Размер на форме (от 1 до 12)'}
-            onChange={(e) => setSelectDimension(e.target.value)}>
-            {dimensions.map((value) => (
-              <MenuItem value={value}>{value}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+
+      <div className={style.dropdowns + ' dropdowns'}>
+        <div
+          className={style.dropdownFieldType}
+          style={{
+            marginBottom: '20px',
+          }}>
+          <Typography
+            variant='subtitle1'
+            style={{ color: 'rgba(255, 255, 255, 0.6)', marginBottom: '5px', display: 'block' }}>
+            Тип поля
+          </Typography>
+          <FormControl fullWidth>
+            <Select
+              variant='filled'
+              labelId='second-block-form-dropdown'
+              id='second-block-form-select'
+              value={selectFieldType}
+              label={'Тип поля'}
+              onChange={(e) => setSelectFieldType(e.target.value)}>
+              {selectValues.map((value) => (
+                <MenuItem value={value}>{value}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+        <div className={style.dropdownNumber}>
+          <FormControl fullWidth>
+            <Typography
+              variant='subtitle1'
+              style={{ color: 'rgba(255, 255, 255, 0.6)', marginBottom: '5px', display: 'block' }}>
+              Размер на форме (от 1 до 12)
+            </Typography>
+            <Select
+              variant='filled'
+              labelId='second-block-form-dropdown-number'
+              id='second-block-form-select'
+              value={selectDimension}
+              label={'Размер на форме (от 1 до 12)'}
+              onChange={(e) => setSelectDimension(e.target.value)}>
+              {dimensions.map((value) => (
+                <MenuItem value={value}>{value}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
       </div>
+
       <div className={style.checkboxes}>
-        {checkboxes.map(({ value, checked }, index) => (
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  label={value}
-                  checked={checked}
-                  onChange={({ target }) =>
-                    setCheckboxes((prev) =>
-                      prev.map((item, id) => {
-                        if (id === index) {
-                          return { value, checked: target.checked };
-                        }
-                        return item;
-                      }),
-                    )
+        <div className={style.checkBoxesLeft}>
+          {checkboxes
+            .slice(0, Math.floor(checkboxes.length / 2))
+            .map(({ value, checked }, index) => (
+              <FormGroup className={style.checkbox}>
+                <FormControlLabel
+                  control={
+                    <CustomCheckbox
+                      label={value}
+                      checked={checked}
+                      onChange={({ target }) =>
+                        setCheckboxes((prev) =>
+                          prev.map((item, id) => {
+                            if (value === item.value) {
+                              return { value, checked: target.checked };
+                            }
+                            return item;
+                          }),
+                        )
+                      }
+                    />
                   }
+                  label={value}
                 />
-              }
-              label={value}
-            />
-          </FormGroup>
-        ))}
+              </FormGroup>
+            ))}
+        </div>
+        <div className={style.checkBoxesRight}>
+          {checkboxes
+            .slice(Math.floor(checkboxes.length / 2))
+            .slice(0, Math.floor(checkboxes.length / 2))
+            .map(({ value, checked }, index) => (
+              <FormGroup className={style.checkbox}>
+                <FormControlLabel
+                  control={
+                    <CustomCheckbox
+                      label={value}
+                      checked={checked}
+                      onChange={({ target }) =>
+                        setCheckboxes((prev) =>
+                          prev.map((item, id) => {
+                            if (value === item.value) {
+                              return { value, checked: target.checked };
+                            }
+                            return item;
+                          }),
+                        )
+                      }
+                    />
+                  }
+                  label={value}
+                />
+              </FormGroup>
+            ))}
+        </div>
       </div>
-      <Button
+      <SmallButtonWide
         onClick={() =>
           onSubmit(
             activeSubNodeInfo.id,
@@ -175,10 +247,11 @@ const SecondBlockForm = ({
             selectDimension,
             checkboxes,
           )
-        }>
-        Применить
-      </Button>
-    </>
+        }
+        style={{ marginLeft: 'auto', display: 'block' }}>
+        Сохранить
+      </SmallButtonWide>
+    </div>
   );
 };
 

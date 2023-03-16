@@ -8,6 +8,7 @@ import {
   Checkbox,
   FormGroup,
   FormControlLabel,
+  useTheme,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from '@material-ui/icons/Add';
@@ -42,6 +43,7 @@ import SecondBlockForm from '../../components/SecondBlockForm';
 import { selectSecondNodes } from '../../store/slices/nodes/selectors';
 
 const Linking = () => {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const [openFirstModal, setOpenFirstModal] = React.useState(false);
   const [openSecondModal, setOpenSecondModal] = React.useState(false);
@@ -56,13 +58,16 @@ const Linking = () => {
 
   const [activeSubNode, setActiveSubNode] = useState(null);
 
+  const sideBarId = 'side-bar-slot';
+
   const [data, setData] = useState({
     nodes: [
       {
         id: '0',
-        name: 'Справочные',
+        name: 'Справочники',
         top: 264,
         left: 172,
+        slotSelector: '#' + sideBarId,
         data: {
           content: referenceSections.map(({ name }, index) => ({
             id: index.toString(),
@@ -76,7 +81,7 @@ const Linking = () => {
           setOpenFirstModal(true);
           setCurrentForm(1);
         },
-
+        setActiveSection(index) {},
         Class: BaseNodeStatic,
       },
     ],
@@ -151,7 +156,6 @@ const Linking = () => {
         setActiveSubNode({ variant, id, subNodeIndex });
         setOpenSecondModal(true);
       },
-
       theme: {
         edge: {
           shapeType: 'AdvancedBezier',
@@ -233,7 +237,17 @@ const Linking = () => {
 
   return (
     <div className={style.container}>
-      <div className='flow-canvas' id='dag-canvas'></div>
+      <div className={style.wrapper}>
+        <div className={style.sideBarWrapper}>
+          <div className={style.sideBar} style={{ backgroundColor: theme.palette.primary.main }}>
+            <Typography variant='h2' style={{ marginBottom: 24 }}>
+              Справочники
+            </Typography>
+            <div id={sideBarId}></div>
+          </div>
+        </div>
+        <div className='flow-canvas' id='dag-canvas'></div>
+      </div>
       {currentForm === 1 ? (
         <BaseModal isOpen={openFirstModal} onClose={handleFirstModalClose}>
           <FirstBlockForm activeSectionId={activeSection.id} onSubmit={saveFirstBlockSettings} />

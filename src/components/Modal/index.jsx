@@ -7,17 +7,8 @@ import style from './index.module.scss';
 const BaseModal = ({ isOpen, onClose, children }) => {
   const theme = useTheme();
 
-  const modalBoxStyles = {
-    overflowY: 'scroll',
-    height: '100vh',
-    position: 'absolute',
-    width: '100vw',
-    top: 0,
-    left: 0,
-  };
-
   const modalBodyStyles = {
-    position: 'absolute',
+    position: 'relative',
     left: '50%',
     transform: 'translate(-50%)',
     border: `2px solid ${theme.palette.accent.light}`,
@@ -25,9 +16,9 @@ const BaseModal = ({ isOpen, onClose, children }) => {
   };
 
   return (
-    <Modal open={isOpen} onClose={onClose}>
-      <Box style={modalBoxStyles}>
-        <div className={style.body} style={modalBodyStyles}>
+    <Modal open={isOpen} onClose={onClose} style={{ height: '100vh', overflowY: 'scroll' }}>
+      <Box style={modalBodyStyles} className={style.body}>
+        <div>
           <CircleButton
             onClick={onClose}
             color={theme.palette.primary.light}
@@ -48,7 +39,6 @@ const BaseModal = ({ isOpen, onClose, children }) => {
           </CircleButton>
           {children}
         </div>
-        <div className={style.scrollSpace}></div>
       </Box>
     </Modal>
   );

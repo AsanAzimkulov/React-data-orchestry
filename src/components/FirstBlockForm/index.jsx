@@ -14,9 +14,19 @@ import style from './index.module.scss';
 import { useSelector } from 'react-redux';
 import { selectReferenceSections } from '../../store/slices/sections/selectors';
 import { SmallButtonWide } from '../SmallButton';
+import { theme } from '../../theme';
+
 
 const FirstBlockForm = ({ activeSectionId, onSubmit }) => {
   const theme = useTheme();
+
+  const InputProps = {
+    ...theme.props.MuiTextField.InputProps,
+    style: {
+      ...theme.props.MuiTextField.InputProps.style,
+      backgroundColor: theme.palette.primary.light,
+    },
+  };
 
   const initialCheckboxes = [
     { value: 'Видимость поиска', checked: false },
@@ -51,7 +61,7 @@ const FirstBlockForm = ({ activeSectionId, onSubmit }) => {
       ? activeSection.options.checkboxes
       : initialCheckboxes,
   );
-  console.log(theme);
+
   return (
     <>
       <Typography variant='h2' style={{ marginBottom: 18 }}>
@@ -65,6 +75,7 @@ const FirstBlockForm = ({ activeSectionId, onSubmit }) => {
             Название справочника:
           </Typography>
           <TextField
+            InputProps={InputProps}
             value={name}
             onInput={(e) => setName(e.target.value)}
             placeholder={'Введите'}
@@ -78,6 +89,7 @@ const FirstBlockForm = ({ activeSectionId, onSubmit }) => {
             Название на английском:
           </Typography>
           <TextField
+            InputProps={InputProps}
             value={nameEng}
             onInput={(e) => setNameEng(e.target.value)}
             placeholder={'Введите'}

@@ -13,92 +13,141 @@
   stroke-width: 1px;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node {
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section {
   width: 200px;
   position: absolute;
-  height: 32px;
-  line-height: 28px;
   text-align: center;
   vertical-align: middle;
-  border-radius: 5px;
-  color: #222;
-  box-shadow: 0 2px 3px 0 rgba(0, 112, 204, 0.06);
+  background: #0F1015;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .title {
-  line-height: 32px;
-  height: 32px;
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section .title {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  background: #454545;
-  border-radius: 15px 15px 0px 0px;
-  padding: 0 8px;
-  color: #FFF;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  color: #FFFFFF;
+  padding: 14px 0;
+  background: #2390DF;
+  border-radius: 8px 8px 0px 0px;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .title .remove {
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section .title .remove {
   cursor: pointer;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .title .add-node {
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section .title .add-node {
   cursor: pointer;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .content {
-  height: 32px;
-  width: 200px;
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section .content {
+  box-sizing: border-box;
+  width: 197px;
   justify-content: space-between;
   align-items: center;
-  padding: 0 8px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid #D9D9D9;
   position: relative;
   cursor: pointer;
+
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  /* identical to box height */
+
+  display: flex;
+  align-items: center;
+
+  color: rgba(255, 255, 255, 0.9);
+
+  border-bottom: 2px solid #3F4044;
+
+  padding: 12px 16px;
+
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .content .targetEndPoint {
+.flow-canvas .addInput {
+  width: 200px;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.flow-canvas .addInput input {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  width: 140px;
+  color: #FFFFFF;
+  background: none;
+  border: none;
+}
+
+.flow-canvas .addInput input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.flow-canvas .addInput input:focus {
+  outline: none;
+}
+
+.flow-canvas .addInput .addButton {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.flow-canvas .flow-canvas .butterfly-wrapper .relational-section-base-node.section .content:last-of-type {
+  border: none;
+}
+
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content .targetEndPoint,
+#side-bar-slot .content .targetEndPoint {
   left: -3px;
   position: absolute;
+  display: none;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .content .sourceEndPoint {
+.flow-canvas .butterfly-wrapper .relational-section-base-node .content .sourceEndPoint,
+#side-bar-slot .content .sourceEndPoint {
   right: -3px;
   position: absolute;
+  display: none;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .content .remove {
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section .content .remove {
   display: none;
   cursor: pointer;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .content .text .input-text {
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section .content .text .input-text {
   height: 28px;
   border: 1px solid #D9D9D9;
   width: 130px;
   padding: 0 4px;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .content .edit {
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section .content .edit {
   display: none;
   cursor: pointer;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .content:last-child {
-  border-radius: 0px 0px 15px 15px;
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section .content:last-child {
+  border-radius: 0px 0px 10px 10px;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .content:hover {
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section .content:hover {
   display: flex;
-  background: rgba(246, 105, 2, 0.2);
+  background: #1f212b;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .content:hover .remove {
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section .content:hover .remove {
   display: contents;
   cursor: pointer;
 }
 
-.flow-canvas .butterfly-wrapper .relational-section-base-node .content:hover .edit {
+.flow-canvas .butterfly-wrapper .relational-section-base-node.section .content:hover .edit {
   display: contents;
   cursor: pointer;
 }
@@ -171,12 +220,12 @@
   font-size: 20px;
 }
 
-.flow-canvas .butterfly-wrapper .base-node-static.relational-section-base-node .content {
+.flow-canvas .butterfly-wrapper .base-node-static.relational-section-base-node.section .content {
   display: flex !important;
   justify-content: space-around !important;
 }
 
-.flow-canvas .butterfly-wrapper .base-node-static.relational-section-base-node .content:hover {
+.flow-canvas .butterfly-wrapper .base-node-static.relational-section-base-node.section .content:hover {
   background: rgba(255, 255, 255, 0.8) !important;
 }
 
@@ -184,7 +233,73 @@
   background: rgba(255, 255, 255, 0.8) !important;
 }
 
-/* .flow-canvas .butterfly-wrapper {
-  top: 0 !important;
-  left: 0 !important;
-} */
+
+.base-node-static {
+  display: none;
+}
+
+.flow-canvas {
+  height: 100vh;
+}
+
+#side-bar-slot .content {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 9px 9px 9px 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+#side-bar-slot .first {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+#side-bar-slot .second {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+#side-bar-slot .settings {
+  margin-right: 15px;
+  width: 15.6px;
+  height: 18.25px;
+  cursor: pointer;
+}
+
+#side-bar-slot .add {
+  height: 14px;
+  width: 14px;
+  cursor: pointer;
+}
+
+#side-bar-slot .content .text {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+#side-bar-slot .check {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+#side-bar-slot .content.active {
+  border: 2px solid #238FDF;
+}
+
+#side-bar-slot .content.active .check svg:nth-child(1),
+#side-bar-slot .content .check svg:nth-child(2) {
+  display: block;
+}
+
+#side-bar-slot .content .check svg:nth-child(1),
+#side-bar-slot .content.active .check svg:nth-child(2) {
+  display: none;
+}
