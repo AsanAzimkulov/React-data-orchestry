@@ -107,7 +107,7 @@ const SecondBlockForm = ({
           <Typography
             variant='subtitle1'
             style={{ color: 'rgba(255, 255, 255, 0.6)', marginBottom: '5px', display: 'block' }}>
-            Название Раздела:
+            Название Пункта Раздела:
           </Typography>
           <TextField
             value={name}
