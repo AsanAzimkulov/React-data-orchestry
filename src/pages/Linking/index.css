@@ -33,6 +33,7 @@
   padding: 14px 0;
   background: #2390DF;
   border-radius: 8px 8px 0px 0px;
+  border-bottom: 2px solid #3F4044;
 }
 
 .flow-canvas .butterfly-wrapper .relational-section-base-node.section .title .remove {

@@ -15,14 +15,15 @@ class RelationalSectionsCanvas extends Canvas {
       }
     });
 
-    this.on('customCreateNode', function ({ name, parentSectionId, cords }) {
+    this.on('customCreateNode', function ({ name, parentSectionId, cords, reactive }) {
       const canvas = this;
       const nodes = this.getDataMap().nodes;
       const mainNode = nodes[0];
-      console.log(cords)
 
+      const id = nodes.length === 0 ? 1 : (nodes.length + 1);
+      console.log(id)
       const node = {
-        id: nodes.length.toString(),
+        id: reactive ? (id - 1).toString() : id.toString(),
         name: name,
         parentSectionId,
         top: cords.y || 221,

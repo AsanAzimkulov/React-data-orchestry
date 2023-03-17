@@ -201,20 +201,21 @@ const Linking = () => {
     );
 
     let canvas = window.canvasRef;
-    const node = canvas.getDataMap().nodes[0];
-    console.log(activeSection.id);
+    const node = canvas.getDataMap().nodes[rawNodes.flat().length];
+    console.log(canvas.getDataMap().nodes, rawNodes);
+
     node.updateNode(activeSection.id, name);
 
-    if (childNodesIds.length !== 0) {
-      let canvas = window.canvasRef;
+    // if (childNodesIds.length !== 0) {
+    //   let canvas = window.canvasRef;
 
-      childNodesIds.forEach((id) => {
-        const node = canvas.getDataMap().nodes[id];
-        node.updateBaseNode(activeSection.id, name);
+    //   childNodesIds.forEach((id) => {
+    //     const node = canvas.getDataMap().nodes[id];
+    //     node.updateBaseNode(activeSection.id, name);
 
-        dispatch(editNode({ variant: 'second', id, node: { name } }));
-      });
-    }
+    //     dispatch(editNode({ variant: 'second', id, node: { name } }));
+    //   });
+    // }
 
     handleFirstModalClose();
   }
@@ -245,7 +246,10 @@ const Linking = () => {
       }),
     );
     let canvas = window.canvasRef;
-    const node = canvas.getDataMap().nodes[id];
+
+    // const index = rawNodes.flat()
+    const node = canvas.getDataMap().nodes[id - 1];
+    console.log(id);
     node.updateNode(subNodeIndex, name);
 
     handleSecondModalClose();

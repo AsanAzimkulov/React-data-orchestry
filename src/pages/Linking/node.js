@@ -302,6 +302,7 @@ class BaseNodeStatic extends Node {
     this.options = opts;
     this.childData = opts.data.content;
   }
+
   draw = (opts) => {
     document.querySelector(this.options.slotSelector).innerHtml = '';
 
@@ -366,7 +367,7 @@ class BaseNodeStatic extends Node {
       const pos = new PositioningSystem();
 
       rawNodesForSection.forEach(rawNode => {
-        _this.emit('customCreateNode', { name: rawNode, parentSectionId: i, cords: pos.getNextCoords() });
+        _this.emit('customCreateNode', { name: rawNode, parentSectionId: i, cords: pos.getNextCoords(), reactive: false });
       })
 
       _this.emit('setActiveSection', 0);
@@ -382,7 +383,7 @@ class BaseNodeStatic extends Node {
           }
         }, 0);
 
-        _this.emit('customCreateNode', { name: 'Раздел ' + (currentSubnodes + 1), parentSectionId: i, cords: pos.getNextCoords() });
+        _this.emit('customCreateNode', { name: 'Раздел ' + (currentSubnodes + 1), parentSectionId: i, cords: pos.getNextCoords(), reactive: true });
       });
 
 
@@ -416,9 +417,10 @@ class BaseNodeStatic extends Node {
   }
 
   updateNode(index, value) {
-    const dom = document.querySelector(this.options.slotSelector);
-    const section = $(dom).find('.text').eq(index);
 
+    const section = $(this.options.slotSelector).find('.text').eq(index);
+
+    console.log(section);
     section.text(value);
     this.childData[index].content = value;
   }
