@@ -247,9 +247,16 @@ const Linking = () => {
     );
     let canvas = window.canvasRef;
 
-    // const index = rawNodes.flat()
-    const node = canvas.getDataMap().nodes[id - 1];
-    console.log(id);
+    let node = canvas.getDataMap().nodes[id - 1];
+
+    // BaseNodeStatic загружается в nodes после всех начальных BaseNodes
+
+    if (node instanceof BaseNodeStatic) {
+      node = canvas.getDataMap().nodes[id];
+    }
+
+    console.log(node);
+
     node.updateNode(subNodeIndex, name);
 
     handleSecondModalClose();

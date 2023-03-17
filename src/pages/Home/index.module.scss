@@ -1,8 +1,7 @@
 .container{
   min-height: 100vh;
   background-image: url(../../assets/images/bg-1.png);
-  background-clip: cover;
-  background-size: 100%;
+  background-size: cover;
   padding-top: 19.44vh;
   @media(max-width: 1560px){
     padding-top: 10vh;

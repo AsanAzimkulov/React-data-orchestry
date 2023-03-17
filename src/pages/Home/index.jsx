@@ -74,7 +74,13 @@ const Home = () => {
 
   const onRemoveSubnode = (index) => {
     setSubnodes((prev) =>
-      prev.map((x, i) => (index === i ? prev[index].filter((_, i) => i !== index) : x)),
+      prev.map((x, i) => {
+        if (activeSection == i) {
+          return x.filter((_, ind) => ind != index);
+        }
+
+        return x;
+      }),
     );
   };
 
