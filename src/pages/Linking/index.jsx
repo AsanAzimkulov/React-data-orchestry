@@ -42,6 +42,8 @@ import {
 import SecondBlockForm from '../../components/SecondBlockForm';
 import { selectRawNodes, selectSecondNodes } from '../../store/slices/nodes/selectors';
 
+window.myCanv = {};
+
 const Linking = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -56,6 +58,10 @@ const Linking = () => {
   const [currentForm, setCurrentForm] = useState(1);
 
   const referenceSections = useSelector(selectReferenceSections);
+  const subnodes = useSelector(selectSecondNodes);
+  // Closure problem
+  window.myCanv.subnodes = subnodes;
+
   const [activeSection, setActiveSection] = useState(referenceSections[0]);
 
   const [activeSubNode, setActiveSubNode] = useState(null);
@@ -83,9 +89,6 @@ const Linking = () => {
           setActiveSection(referenceSections[id]);
           setOpenFirstModal(true);
           setCurrentForm(1);
-        },
-        setActiveSection(index) {
-          
         },
         Class: BaseNodeStatic,
       },

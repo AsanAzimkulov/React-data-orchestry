@@ -2,6 +2,62 @@ import { Node } from 'butterfly-dag';
 import $ from 'jquery';
 // import '../../static/iconfont.css';
 
+// Positioning of nodes
+
+class PositioningSystem {
+  constructor() {
+    this.nodeWidth = 200;
+    this.nodeOrdinaryHeight = 300;
+    this.horizontalShift = 248;
+    this.verticalShift = 348;
+
+
+
+    this.initialCords = {
+      x: 91,
+      y: 223,
+    }
+
+    this.cords = {
+      x: this.initialCords.x - this.horizontalShift,
+      y: this.initialCords.y,
+    }
+  }
+
+  getNextCoords() {
+
+    const canvasWidth = document.querySelector('.butterfly-selected-canvas').getAttribute('width');
+    const canvasHeight = document.querySelector('.butterfly-selected-canvas').getAttribute('height');
+
+    if (((this.cords.y + this.verticalShift) > canvasHeight) && (this.cords.x + this.horizontalShift + this.nodeWidth) > canvasWidth) {
+      this.cords.y = this.initialCords.y;
+      this.cords.x = this.initialCords.x;
+      return {
+        x: this.cords.x,
+        y: this.cords.y
+      }
+    }
+
+
+
+    if ((this.cords.x + this.horizontalShift + this.nodeWidth) > canvasWidth) {
+      this.cords.x = this.initialCords.x;
+      this.cords.y += this.verticalShift;
+      return {
+        x: this.cords.x,
+        y: this.cords.y
+      }
+    }
+
+    this.cords.x += this.horizontalShift;
+
+    return {
+      x: this.cords.x,
+      y: this.cords.y
+    }
+  }
+}
+
 let getAttrObj = (namedNodeMap) => {
   return Array.prototype.reduce.call(namedNodeMap, function (pre, item, index, arr) {
     pre[item.nodeName] = item.value;
@@ -23,11 +79,12 @@ class BaseNode extends Node {
   draw = (opts) => {
     const _this = this;
     let className = this.options.type;
-    let container = $('<div class="relational-section-base-node base-node section"></div>')
+    let container = $(`<div class="relational-section-base-node base-node section"></div>`)
       .css('top', opts.top + 'px')
       .css('left', opts.left + 'px')
       .addClass(className)
-      .attr('id', opts.id);
+      .attr('id', opts.id)
+      .attr('parentSectionId', this.options.parentSectionId);
 
     this._createTitle(container);
     this._createChildNode(container);
@@ -303,67 +360,41 @@ class BaseNodeStatic extends Node {
       </div > `);
     });
 
-    // Positioning of nodes
-    const nodeWidth = 200;
-    const nodeOrdinaryHeight = 300;
-    const horizontalShift = 248;
-    const verticalShift = 348;
-
-
-
-    const initialCords = {
-      x: 91,
-      y: 223,
-    }
-
-    const cords = {
-      x: initialCords.x - horizontalShift,
-      y: initialCords.y,
-    }
-
-    function calculateCords() {
-
-      const canvasWidth = document.querySelector('.butterfly-selected-canvas').getAttribute('width');
-      const canvasHeight = document.querySelector('.butterfly-selected-canvas').getAttribute('height');
-
-      if ((cords.x + horizontalShift + nodeWidth) > canvasWidth) {
-        cords.x = initialCords.x;
-        cords.y += verticalShift;
-        return {
-          x: cords.x,
-          y: cords.y
-        }
-      }
-
-      if ((cords.y + verticalShift) > canvasHeight) {
-        cords.y = initialCords.y;
-        cords.x = initialCords.x;
-        return {
-          x: cords.x,
-          y: cords.y
-        }
-      }
-
-      cords.x += horizontalShift;
-
-      return {
-        x: cords.x,
-        y: cords.y
-      }
-    }
-
-    // 
 
     _this.options.rawNodes.forEach((rawNodesForSection, i) => {
-      rawNodesForSection.forEach(rawNode => {
-        _this.emit('customCreateNode', { name: rawNode, parentSectionId: i, cords: calculateCords() });
-      })
-    })
 
-    $(dom).find('.add').on('click', function () {
-      const name = _this.childData.find(({ id }) => id === $(this).parents('.content').attr('data-id')).content;
-      _this.emit('customCreateNode', { name: name.length === 0 ? 'Пункт раздела ' + (1 + dom) : name, parentSectionId: $(this).parents('.content').attr('data-id') });
+      const pos = new PositioningSystem();
+
+      rawNodesForSection.forEach(rawNode => {
+        _this.emit('customCreateNode', { name: rawNode, parentSectionId: i, cords: pos.getNextCoords() });
+      })
+
+      _this.emit('setActiveSection', 0);
+
+      $(dom).find(`.content[data-id="${i}"] .add`).on('click', function () {
+        const name = _this.childData.find(({ id }) => id === $(this).parents('.content').attr('data-id')).content;
+
+        const currentSubnodes = Array.from(document.querySelectorAll('.section')).reduce((acc, cur) => {
+          if (cur.getAttribute('parentSectionId') == i) {
+            return acc + 1;
+          } else {
+            return acc;
+          }
+        }, 0);
+
+        _this.emit('customCreateNode', { name: 'Раздел ' + (currentSubnodes + 1), parentSectionId: i, cords: pos.getNextCoords() });
+      });
+
+
     });
+
+
+
+
+    // $(dom).find('.add').on('click', function () {
+    //   const name = _this.childData.find(({ id }) => id === $(this).parents('.content').attr('data-id')).content;
+    //   _this.emit('customCreateNode', { name: name.length === 0 ? 'Пункт раздела ' + (1 + dom) : name, parentSectionId: $(this).parents('.content').attr('data-id') });
+    // });
 
     $(dom).find('.settings').on('click', function (e) {
       // if (e.target.parentNode.classList.contains('settings')) {
@@ -372,11 +403,13 @@ class BaseNodeStatic extends Node {
       // }
     })
 
+
+
     $(dom).find('.content').on('click', function (e) {
       if (e.target === this || e.target.classList.contains('text')) {
         $(dom).find('.content').removeClass('active');
         $(this).addClass('active');
-        _this.options.setActiveSection($(this).index);
+        _this.emit('setActiveSection', this.getAttribute('data-id'))
       }
     })
 

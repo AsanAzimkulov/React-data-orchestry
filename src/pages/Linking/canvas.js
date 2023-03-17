@@ -80,6 +80,27 @@ class RelationalSectionsCanvas extends Canvas {
       args[0].addNode('second', node);
       // setTimeout(() => console.log(_this.getDataMap(), 10000));
     });
+
+    this.on('setActiveSection', function (sectionId) {
+      // window.myCanv.subnodes.forEach(subnode => {
+
+      //   // console.log(document.querySelectorAll('.flow-canvas .section')[subnode.id]);
+
+      //   if (subnode.parentSectionId == sectionId) {
+      //     Array.from(document.querySelectorAll('.flow-canvas .section'))[subnode.id].style.display = 'block';
+      //   } else {
+      //     Array.from(document.querySelectorAll('.flow-canvas .section'))[subnode.id].style.display = 'none';
+      //   }
+      // })
+
+      Array.from(document.querySelectorAll('.section')).forEach(node => {
+        if (node.getAttribute('parentSectionId') == sectionId) {
+          node.style.display = 'block';
+        } else {
+          node.style.display = 'none';
+        }
+      });
+    });
   }
 
 
