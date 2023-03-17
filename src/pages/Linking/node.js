@@ -4,7 +4,7 @@ import $ from 'jquery';
 
 // Positioning of nodes
 
-class PositioningSystem {
+export class PositioningSystem {
   constructor() {
     this.nodeWidth = 200;
     this.nodeOrdinaryHeight = 300;
@@ -160,9 +160,9 @@ class BaseNode extends Node {
     //   if (!e.target.classList.contains('iconfont') && !e.target.classList.contains('remove')) {
     //     // Declosure
 
-    //     const subNodeIndex = new Array.from(e.target.closest('.relational-section-base-node').querySelectorAll('.content')).indexOf(e.target.classList.contains('.content') ? e.target : e.target.closest('.content'));
+    //     const subnodeIndex = new Array.from(e.target.closest('.relational-section-base-node').querySelectorAll('.content')).indexOf(e.target.classList.contains('.content') ? e.target : e.target.closest('.content'));
 
-    //     _this.options.onClickSecondSubNode('second', _this.id, subNodeIndex);
+    //     _this.options.onClickSecondSubNode('second', _this.id, subnodeIndex);
     //   }
     // })
 
@@ -215,7 +215,7 @@ class BaseNode extends Node {
       const oldNode = $(this).prev('.text');
       const oldNodeText = $(this).prev('.text').text();
 
-      const subNodeIndex = $(this).parent('.content').index() - 1;
+      const subnodeIndex = $(this).parent('.content').index() - 1;
 
       if ($(oldNode.html()).attr('type') !== 'text') {
         oldNode.html(`<input type=text class=input-text />`);
@@ -226,8 +226,8 @@ class BaseNode extends Node {
 
             oldNode.text(oldInputText);
 
-            _this.childData[subNodeIndex] = { ..._this.childData[subNodeIndex], content: oldInputText };
-            _this.editSubNode('second', _this.id, subNodeIndex, _this.childData[subNodeIndex]);
+            _this.childData[subnodeIndex] = { ..._this.childData[subnodeIndex], content: oldInputText };
+            _this.editSubNode('second', _this.id, subnodeIndex, _this.childData[subnodeIndex]);
           }
         });
       }
@@ -281,8 +281,8 @@ class BaseNode extends Node {
   }
 
   updateNode(index, value) {
-    const subNode = $(this.dom).find('.text').eq(index);
-    subNode.text(value);
+    const subnode = $(this.dom).find('.text').eq(index);
+    subnode.text(value);
     // this.updateSubNodeC(index, value)
     // this.options.data.content[index] = { ...this.options.data.content[index], content: value }
   }

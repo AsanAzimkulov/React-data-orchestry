@@ -8,7 +8,6 @@ import FormItem from './../../components/FormItem';
 import FormItems from './../../components/FormItems';
 import style from './index.module.scss';
 import { useDispatch } from 'react-redux';
-import { changeSections } from '../../store/slices/sections';
 import FormSubItems from '../../components/FormSubItems';
 import { loadRawNodes } from '../../store/slices/nodes';
 
@@ -22,80 +21,38 @@ const Home = () => {
     marginBottom: '22px',
   };
 
-  const [referenceSections, setReferenceSections] = useState([]);
-  const [activeSection, setActiveSection] = useState(0);
-  const [subnodes, setSubnodes] = useState([]);
+  const [guides, setGuides] = useState([]);
+  const [sections, setSections] = useState([]);
 
-  const onRemoveSection = (index) => {
-    setActiveSection(0);
-    setSubnodes((prev) => prev.filter((_, i) => index !== i));
-    setReferenceSections((prev) =>
-      prev
-        .filter((_, i) => index !== i)
-        .map((section, i) => {
-          if (i === 0) {
-            return { name: section.name, active: true };
-          }
-          return { name: section.name, active: false };
-        }),
-    );
+  const onRemoveGuide = (index) => {
+    setGuides((prev) => prev.filter((_, i) => i !== index));
   };
 
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const onSelectSection = (index) => {
-    setReferenceSections((prev) =>
-      prev.map((item, i) => {
-        if (index === i) {
-          return { name: item.name, active: true };
-        }
-        return { name: item.name, active: false };
-      }),
-    );
-    setActiveSection(index);
+  const onAddGuide = (name) => {
+    setGuides((prev) => [...prev, name.length === 0 ? 'Справочник ' + (prev.length + 1) : name]);
   };
 
-  const onAddSection = (section) => {
-    setReferenceSections((prev) => [...prev, section]);
-    setSubnodes((prev) => [...prev, []]);
+  const onAddSection = (name) => {
+    setSections((prev) => [...prev, name.length === 0 ? 'Раздел ' + (prev.length + 1) : name]);
   };
 
-  const onAddSubnode = (value) => {
-    setSubnodes((prev) =>
-      prev.map((x, i) => {
-        if (i === activeSection) {
-          return [...prev[activeSection], value];
-        }
-        return x;
-      }),
-    );
+  const onRemoveSection = (index) => {
+    setSections((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const onRemoveSubnode = (index) => {
-    setSubnodes((prev) =>
-      prev.map((x, i) => {
-        if (activeSection == i) {
-          return x.filter((_, ind) => ind != index);
-        }
-
-        return x;
-      }),
-    );
-  };
-
-  const saveSections = () => {
+  function saveNodes() {
     dispatch(
-      changeSections({
-        reference: referenceSections.map(({ name }, id) => ({ name, options: {}, id })),
-        block: 'reference',
-      }),
+      loadRawNodes([
+        ...guides.map((guide) => ({ name: guide, type: 'guide' })),
+        ...sections((section) => ({ name: section, type: 'section' })),
+      ]),
     );
-
-    dispatch(loadRawNodes(subnodes));
-
     setTimeout(() => history.push('/linking'), 300);
-  };
+  }
+
   return (
     <div className={style['container']}>
       <Typography variant='h1' hidden>
@@ -108,27 +65,20 @@ const Home = () => {
               Справочники
             </Typography>
             <FormItems
-              onSelect={onSelectSection}
               onRemove={onRemoveSection}
               onAdd={onAddSection}
-              items={referenceSections}
+              items={guides}
               setItems={onAddSection}
-              defaultValue={'Справочник'}
             />
           </div>
           <div className={style['right']} style={columnStyle}>
             <Typography variant='h2' style={{ marginBottom: 17 }}>
               Основные разделы
             </Typography>
-            <FormSubItems
-              items={subnodes.length === 0 ? [] : subnodes[activeSection]}
-              onAdd={onAddSubnode}
-              onRemove={onRemoveSubnode}
-              defaultValue={'Раздел'}
-            />
+            <FormSubItems items={sections} onAdd={onAddSection} onRemove={onRemoveSection} />
           </div>
         </div>
-        <Button onClick={saveSections} style={{ marginLeft: 'auto', display: 'block' }}>
+        <Button onClick={saveNodes} style={{ marginLeft: 'auto', display: 'block' }}>
           К следующему шагу
         </Button>
       </div>

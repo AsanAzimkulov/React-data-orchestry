@@ -4,15 +4,11 @@ import FormItem from '../FormItem';
 import { SmallButton } from '../SmallButton';
 import style from './index.module.scss';
 
-const FormItems = ({ items, setItems, defaultValue, onRemove, onSelect, onAdd }) => {
+const FormItems = ({ items, setItems, onRemove, onSelect, onAdd }) => {
   const [value, setValue] = useState('');
 
   const handleAdd = (value) => {
-    onAdd({
-      name: value || defaultValue + ' ' + (items.length + 1),
-      active: items.length === 0 ? true : false,
-    });
-
+    onAdd(value);
     setValue('');
   };
 
@@ -27,15 +23,8 @@ const FormItems = ({ items, setItems, defaultValue, onRemove, onSelect, onAdd })
         />
         <SmallButton onClick={() => handleAdd(value.trim())}>Добавить</SmallButton>
       </div>
-      {items.map(({ name, active }, index) => (
-        <FormItem
-          active={active}
-          value={name}
-          onSelect={onSelect}
-          onRemove={onRemove}
-          index={index}
-          key={Math.random()}
-        />
+      {items.map((name, index) => (
+        <FormItem value={name} onRemove={onRemove} index={index} key={Math.random()} />
       ))}
     </>
   );

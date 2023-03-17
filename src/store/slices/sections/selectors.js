@@ -1,1 +1,0 @@
-export const selectReferenceSections = (state) => state.sections.reference;

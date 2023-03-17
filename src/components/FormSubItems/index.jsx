@@ -9,7 +9,7 @@ const FormSubItems = ({ items, onAdd, onRemove, defaultValue }) => {
   const [value, setValue] = useState('');
 
   const handleAdd = (value) => {
-    onAdd(value || defaultValue + ' ' + (items.length + 1));
+    onAdd(value);
     setValue('');
   };
 

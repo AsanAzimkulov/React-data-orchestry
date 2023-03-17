@@ -23,10 +23,7 @@ import { SmallButtonWide } from '../SmallButton';
 
 import './mui-overrides.css';
 
-const SecondBlockForm = ({
-  activeSubNodeInfo = { variant: 'second', id: null, subNodeIndex: null },
-  onSubmit,
-}) => {
+const SecondBlockForm = ({ field, onSubmit }) => {
   const theme = useTheme();
 
   const InputProps = {
@@ -75,26 +72,20 @@ const SecondBlockForm = ({
     'Кнопочный список',
   ];
 
-  const nodes = useSelector(selectSecondNodes);
-
-  const activeSubNode =
-    nodes[activeSubNodeInfo.id - INITIAL_FIRST_NODES].data.content[
-      activeSubNodeInfo.subNodeIndex
-    ] || {};
 
   const [selectFieldType, setSelectFieldType] = useState(
-    activeSubNode.fieldType || selectValues[0],
+    field.fieldType || selectValues[0],
   );
 
-  const [name, setName] = useState(activeSubNode.content || '');
+  const [name, setName] = useState(field.content || '');
 
-  const [nameEng, setNameEng] = useState(activeSubNode.nameEng || '');
+  const [nameEng, setNameEng] = useState(field.nameEng || '');
 
   const [checkboxes, setCheckboxes] = useState(
-    activeSubNode.checkboxes ? activeSubNode.checkboxes : initialCheckboxes,
+    field.checkboxes ? field.checkboxes : initialCheckboxes,
   );
 
-  const [selectDimension, setSelectDimension] = useState(activeSubNode.dimension || 1);
+  const [selectDimension, setSelectDimension] = useState(field.dimension || 1);
   const dimensions = new Array(12).fill(null).map((_, i) => i + 1);
 
   return (
@@ -238,9 +229,6 @@ const SecondBlockForm = ({
       <SmallButtonWide
         onClick={() =>
           onSubmit(
-            activeSubNodeInfo.id,
-            activeSubNodeInfo.subNodeIndex,
-            activeSubNodeInfo.variant,
             name,
             nameEng,
             selectFieldType,

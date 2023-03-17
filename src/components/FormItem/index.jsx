@@ -5,22 +5,16 @@ import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CircleButton from '../CircleButton';
 
-const FormItem = ({ value, onRemove, index, active, onSelect }) => {
+const FormItem = ({ value, onRemove, index }) => {
   const theme = useTheme();
 
-  const handleClick = () => {
-    if (!active) onSelect(index);
-  };
   const [inputValue, setInputValue] = useState(value);
   return (
     <div className={styles.container}>
       <div
         className={styles.text}
-        onClick={handleClick}
         style={{
-          backgroundColor: active
-            ? theme.palette.secondary.main
-            : theme.palette.primary.moreLighter,
+          backgroundColor: theme.palette.primary.moreLighter,
         }}>
         <Typography variant={'body1'}>{value}</Typography>
       </div>

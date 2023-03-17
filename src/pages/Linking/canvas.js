@@ -46,27 +46,27 @@ class RelationalSectionsCanvas extends Canvas {
           };
 
         },
-        addSubNode(variant, id, subNode) {
-          return args[0].addSubNode(variant, id, subNode);
+        addSubNode(variant, id, subnode) {
+          return args[0].addSubNode(variant, id, subnode);
         },
-        editSubNode(variant, id, subNodeIndex, subNode) {
-          return args[0].editSubNode(variant, id, subNodeIndex, subNode);
+        editSubNode(variant, id, subnodeIndex, subnode) {
+          return args[0].editSubNode(variant, id, subnodeIndex, subnode);
         },
-        deleteSubNode(variant, id, subNodeId) {
-          _this.removeNode(subNodeId);
-          return args[0].deleteSubNode(variant, id, subNodeId);
+        deleteSubNode(variant, id, subnodeId) {
+          _this.removeNode(subnodeId);
+          return args[0].deleteSubNode(variant, id, subnodeId);
         },
         deleteNode(variant, id, parentId) {
           _this.removeNode(id);
           console.log(_this.getDataMap())
           return args[0].deleteNode(variant, id, parentId);
         },
-        onClickSecondSubNode(variant, id, subNodeId) {
-          return args[0].onClickSecondSubNode(variant, id, subNodeId)
+        onClickSecondSubNode(variant, id, subnodeId) {
+          return args[0].onClickSecondSubNode(variant, id, subnodeId)
         },
         updateSubNodeC(index, value) {
-          const subNode = _this.getNode(index + '');
-          subNode.content = value;
+          const subnode = _this.getNode(index + '');
+          subnode.content = value;
         },
         data: {
           content: [

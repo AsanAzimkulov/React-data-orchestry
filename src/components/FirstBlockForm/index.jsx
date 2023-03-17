@@ -11,13 +11,11 @@ import {
 import CustomCheckbox from '../CustomCheckbox';
 
 import style from './index.module.scss';
-import { useSelector } from 'react-redux';
-import { selectReferenceSections } from '../../store/slices/sections/selectors';
 import { SmallButtonWide } from '../SmallButton';
 import { theme } from '../../theme';
 
 
-const FirstBlockForm = ({ activeSectionId, onSubmit }) => {
+const FirstBlockForm = ({ field, onSubmit }) => {
   const theme = useTheme();
 
   const InputProps = {
@@ -52,13 +50,12 @@ const FirstBlockForm = ({ activeSectionId, onSubmit }) => {
     { value: 'Убрать из мобильного приложения', checked: false },
   ];
 
-  const sections = useSelector(selectReferenceSections);
-  const activeSection = sections[activeSectionId];
-  const [name, setName] = useState(activeSection.name);
-  const [nameEng, setNameEng] = useState(activeSection.nameEng || '');
+
+  const [name, setName] = useState(field.name);
+  const [nameEng, setNameEng] = useState(field.nameEng || '');
   const [checkboxes, setCheckboxes] = useState(
-    activeSection.options && activeSection.options.checkboxes
-      ? activeSection.options.checkboxes
+    field.options && field.options.checkboxes
+      ? field.options.checkboxes
       : initialCheckboxes,
   );
 
@@ -72,7 +69,7 @@ const FirstBlockForm = ({ activeSectionId, onSubmit }) => {
           <Typography
             variant='subtitle1'
             style={{ color: 'rgba(255, 255, 255, 0.6)', marginBottom: '5px', display: 'block' }}>
-            Название справочника:
+            Название пункта справочника:
           </Typography>
           <TextField
             InputProps={InputProps}
@@ -155,7 +152,7 @@ const FirstBlockForm = ({ activeSectionId, onSubmit }) => {
         </div>
       </div>
       <SmallButtonWide
-        onClick={() => onSubmit(name, nameEng, checkboxes, activeSection.childNodesIds)}
+        onClick={() => onSubmit(name, nameEng, checkboxes)}
         style={{ marginLeft: 'auto', display: 'block' }}>
         Сохранить
       </SmallButtonWide>
