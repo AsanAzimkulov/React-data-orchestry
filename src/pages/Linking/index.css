@@ -30,10 +30,12 @@
   font-size: 16px;
   line-height: 19px;
   color: #FFFFFF;
-  padding: 14px 0;
+  padding: 14px 16px;
   background: #2390DF;
   border-radius: 8px 8px 0px 0px;
   border-bottom: 2px solid #3F4044;
+  display: flex;
+  justify-content: space-between;
 }
 
 .flow-canvas .butterfly-wrapper .relational-section-base-node.section .title .remove {
@@ -248,6 +250,8 @@
   justify-content: center !important;
 }
 
+
+
 .base-node-static .add {
   margin-left: auto;
   font-size: 20px;
@@ -335,4 +339,14 @@
 #side-bar-slot .content .check svg:nth-child(1),
 #side-bar-slot .content.active .check svg:nth-child(2) {
   display: none;
+}
+
+.nodeSettings {
+  cursor: pointer;
+  height: 16.25px;
+}
+
+.base-node .title .titleText {
+  width: 100%;
+  display: block;
 }

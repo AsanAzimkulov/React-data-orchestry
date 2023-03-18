@@ -10,17 +10,17 @@ export const nodesSlice = createSlice({
     nodes: []
   },
   reducers: {
-    addNodes(state,action){
+    addNodes(state, action) {
       state.nodes = [...state.nodes, ...action.payload.nodes]
     },
     addNode(state, action) {
       state.nodes.push(action.payload.node);
     },
     deleteNode(state, action) {
-      state.nodes = state.nodes.filter(({id}) => id != action.payload.id);
+      state.nodes = state.nodes.filter(({ id }) => id != action.payload.id);
     },
     editNode(state, action) {
-      state.nodes[action.payload.id] = action.payload.node;
+      state.nodes[action.payload.id] = { ...state.nodes[action.payload.id], ...action.payload.node };
     },
 
     addField(state, action) {

@@ -16,7 +16,7 @@ import { theme } from '../../theme';
 import { useSelector } from 'react-redux';
 import { selectNodes } from '../../store/slices/nodes/selectors';
 
-const FirstBlockForm = ({ fieldIndex, id, onSubmit }) => {
+const FirstBlockForm = ({ id, onSubmit }) => {
   const theme = useTheme();
 
   const InputProps = {
@@ -51,12 +51,12 @@ const FirstBlockForm = ({ fieldIndex, id, onSubmit }) => {
     { value: 'Убрать из мобильного приложения', checked: false },
   ];
 
-  const field = useSelector(selectNodes).find((node) => node.id === id).childData[fieldIndex];
+  const node = useSelector(selectNodes).find((node) => node.id === id);
 
-  const [name, setName] = useState(field.name);
-  const [nameEng, setNameEng] = useState(field.nameEng || '');
+  const [name, setName] = useState(node.name);
+  const [nameEng, setNameEng] = useState(node.nameEng || '');
   const [checkboxes, setCheckboxes] = useState(
-    field.options ? field.options.checkboxes : initialCheckboxes,
+    node.options ? node.options.checkboxes : initialCheckboxes,
   );
 
   return (

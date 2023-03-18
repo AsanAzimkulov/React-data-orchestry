@@ -83,12 +83,14 @@ const Linking = () => {
         onClickField(id, fieldIndex, type) {
           setActiveFieldIndex(fieldIndex);
           setActiveNodeId(id);
-          setCurrentForm(type);
-          if (type === 'guide') {
-            setOpenFirstModal(true);
-          } else {
-            setOpenSecondModal(true);
-          }
+          setCurrentForm(1);
+
+          setOpenSecondModal(true);
+        },
+        onClickNode(id) {
+          setActiveNodeId(id);
+          setCurrentForm(0);
+          setOpenFirstModal(true);
         },
 
         addNode(node) {
@@ -186,42 +188,44 @@ const Linking = () => {
   //
 
   function saveFieldSettings({ name, nameEng, checkboxes, selectFieldType, selectDimension }) {
-    if (filterNodeType === 'guide') {
-      dispatch(
-        editField({
-          id: activeNodeId,
-          fieldIndex: activeFieldIndex,
-          field: {
-            options: { checkboxes },
-            name,
-            nameEng,
-          },
-        }),
-      );
-    } else {
-      dispatch(
-        editField({
-          id: activeNodeId,
-          fieldIndex: activeFieldIndex,
-          field: {
-            options: { checkboxes, dimension: selectDimension, fieldType: selectFieldType },
-            name,
-            nameEng,
-          },
-        }),
-      );
-    }
+    dispatch(
+      editField({
+        id: activeNodeId,
+        fieldIndex: activeFieldIndex,
+        field: {
+          options: { checkboxes, dimension: selectDimension, fieldType: selectFieldType },
+          name,
+          nameEng,
+        },
+      }),
+    );
 
     const canvas = window.myCanv.canv;
     const node = canvas.getNode(activeNodeId);
 
     node.updateField(activeFieldIndex, name);
 
-    if (currentForm === 'guide') {
-      handleFirstModalClose();
-    } else {
-      handleSecondModalClose();
-    }
+    handleSecondModalClose();
+  }
+
+  function saveNodeSettings({ name, nameEng, checkboxes }) {
+    dispatch(
+      editNode({
+        id: activeNodeId,
+        node: {
+          options: { checkboxes },
+          name,
+          nameEng,
+        },
+      }),
+    );
+
+    const canvas = window.myCanv.canv;
+    const node = canvas.getNode(activeNodeId);
+
+    node.updateBaseNode(activeNodeId, name);
+
+    handleFirstModalClose();
   }
 
   //
@@ -273,19 +277,16 @@ const Linking = () => {
         </div>
         <div className='flow-canvas' id='dag-canvas'></div>
       </div>
-      {currentForm === 'guide' ? (
+      {currentForm === 0 ? (
         <BaseModal isOpen={openFirstModal} onClose={handleFirstModalClose}>
-          <FirstBlockForm
-            fieldIndex={activeFieldIndex}
-            id={activeNodeId}
-            onSubmit={saveFieldSettings}
-          />
+          <FirstBlockForm id={activeNodeId} onSubmit={saveNodeSettings} />
         </BaseModal>
       ) : (
         <BaseModal isOpen={openSecondModal} onClose={handleSecondModalClose}>
           <SecondBlockForm
-            fieldIndex={activeFieldIndex}
+            fieldParentType={filterNodeType}
             id={activeNodeId}
+            fieldIndex={activeFieldIndex}
             onSubmit={saveFieldSettings}
           />
         </BaseModal>
