@@ -13,9 +13,10 @@ import CustomCheckbox from '../CustomCheckbox';
 import style from './index.module.scss';
 import { SmallButtonWide } from '../SmallButton';
 import { theme } from '../../theme';
+import { useSelector } from 'react-redux';
+import { selectNodes } from '../../store/slices/nodes/selectors';
 
-
-const FirstBlockForm = ({ field, onSubmit }) => {
+const FirstBlockForm = ({ fieldIndex, id, onSubmit }) => {
   const theme = useTheme();
 
   const InputProps = {
@@ -50,13 +51,12 @@ const FirstBlockForm = ({ field, onSubmit }) => {
     { value: 'Убрать из мобильного приложения', checked: false },
   ];
 
+  const field = useSelector(selectNodes).find((node) => node.id === id).childData[fieldIndex];
 
   const [name, setName] = useState(field.name);
   const [nameEng, setNameEng] = useState(field.nameEng || '');
   const [checkboxes, setCheckboxes] = useState(
-    field.options && field.options.checkboxes
-      ? field.options.checkboxes
-      : initialCheckboxes,
+    field.options ? field.options.checkboxes : initialCheckboxes,
   );
 
   return (
@@ -152,7 +152,7 @@ const FirstBlockForm = ({ field, onSubmit }) => {
         </div>
       </div>
       <SmallButtonWide
-        onClick={() => onSubmit(name, nameEng, checkboxes)}
+        onClick={() => onSubmit({ name, nameEng, checkboxes })}
         style={{ marginLeft: 'auto', display: 'block' }}>
         Сохранить
       </SmallButtonWide>

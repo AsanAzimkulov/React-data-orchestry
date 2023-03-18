@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
@@ -55,28 +55,40 @@ const Linking = () => {
   const [activeNodeId, setActiveNodeId] = useState();
   const [activeFieldIndex, setActiveFieldIndex] = useState();
 
-  const [activeField, setActiveField] = useState();
-
   const [currentForm, setCurrentForm] = useState(1);
+
+  const guidePos = new PositioningSystem();
+  const sectionPos = new PositioningSystem();
 
   const data = {
     nodes: rawNodes.map(({ name, type }, i) => {
+      let coords;
+
+      if (type === 'guide') {
+        coords = guidePos.getNextCoords();
+      } else {
+        coords = sectionPos.getNextCoords();
+      }
+
       return {
         id: i,
         name,
         type,
-        data: {
-          content: [],
-        },
-        top: 0,
-        left: 0,
+        childData: [],
+        top: coords.y,
+        left: coords.x,
+        prevCoords: { left: coords.x, top: coords.y },
         Class: BaseNode,
 
         onClickField(id, fieldIndex, type) {
-          setActiveFieldIndex(id);
-          setActiveField(nodes[id].data.content[fieldIndex]);
+          setActiveFieldIndex(fieldIndex);
           setActiveNodeId(id);
           setCurrentForm(type);
+          if (type === 'guide') {
+            setOpenFirstModal(true);
+          } else {
+            setOpenSecondModal(true);
+          }
         },
 
         addNode(node) {
@@ -112,19 +124,23 @@ const Linking = () => {
     }),
   };
 
-  const canvasRef = useState(null);
-
   // Первая загрузка
 
   useEffect(() => {
     dispatch(
-      addNodes({ nodes: data.nodes.map(({ id, name, type, data }) => ({ id, name, type, data })) }),
+      addNodes({
+        nodes: data.nodes.map(({ id, name, type }) => ({
+          id,
+          name,
+          type,
+          childData: [],
+        })),
+      }),
     );
 
     let root = document.getElementById('dag-canvas');
-    let canvas = canvasRef.current;
 
-    canvas = new Canvas({
+    const canvas = new Canvas({
       root: root,
       disLinkable: true, // 可删除连线
       linkable: true, // 可连线
@@ -137,7 +153,22 @@ const Linking = () => {
         },
       },
     });
-    window.canvasRef = canvas;
+
+    window.myCanv.canv = canvas;
+
+    canvas.on('node-mounted', (id) => {
+      if (id === rawNodes.length - 1 && !window.myCanv.canv.nodesLoaded) {
+        filterNodes('guide');
+        window.myCanv.canv.nodesLoaded = true;
+      }
+    });
+
+    canvas.on('system.node.move', ({ nodes }) => {
+      // Сохранения координат узла в собственной секции
+      if (filterNodeType !== 'all') {
+        nodes[0].options.prevCoords = { top: nodes[0].top, left: nodes[0].left };
+      }
+    });
 
     canvas.draw(data, () => {
       canvas.setGridMode(true, {
@@ -154,60 +185,109 @@ const Linking = () => {
   }, []);
   //
 
-  function saveFieldSettings(name, nameEng, checkboxes) {
-    dispatch(
-      editField({
-        id: activeNodeId,
-        fieldIndex: activeFieldIndex,
-        field: {
-          options: { checkboxes },
-          name,
-          nameEng,
-        },
-      }),
-    );
+  function saveFieldSettings({ name, nameEng, checkboxes, selectFieldType, selectDimension }) {
+    if (filterNodeType === 'guide') {
+      dispatch(
+        editField({
+          id: activeNodeId,
+          fieldIndex: activeFieldIndex,
+          field: {
+            options: { checkboxes },
+            name,
+            nameEng,
+          },
+        }),
+      );
+    } else {
+      dispatch(
+        editField({
+          id: activeNodeId,
+          fieldIndex: activeFieldIndex,
+          field: {
+            options: { checkboxes, dimension: selectDimension, fieldType: selectFieldType },
+            name,
+            nameEng,
+          },
+        }),
+      );
+    }
 
-    let canvas = window.canvasRef;
+    const canvas = window.myCanv.canv;
     const node = canvas.getNode(activeNodeId);
 
-    node.updateField(activeNodeId, activeFieldIndex, name);
+    node.updateField(activeFieldIndex, name);
 
-    handleFirstModalClose();
+    if (currentForm === 'guide') {
+      handleFirstModalClose();
+    } else {
+      handleSecondModalClose();
+    }
   }
 
   //
+
+  function filterNodes(value) {
+    setFilterNodeType(value);
+
+    const allPos = new PositioningSystem();
+
+    window.myCanv.canv.nodes.forEach((node) => {
+      if (value === 'all') {
+        const coords = allPos.getNextCoords();
+        node.moveTo(coords.x, coords.y);
+        node.dom.style.display = 'block';
+      } else if (node.options.type === value || value === 'all') {
+        node.moveTo(node.options.prevCoords.left, node.options.prevCoords.top);
+        node.dom.style.display = 'block';
+      } else {
+        node.dom.style.display = 'none';
+        node.moveTo(node.options.prevCoords.left, node.options.prevCoords.top);
+      }
+    });
+  }
 
   return (
     <div className={style.container}>
       <div className={style.wrapper}>
         <div className={style.sideBarWrapper}>
           <div className={style.sideBar} style={{ backgroundColor: theme.palette.primary.main }}>
-            <Button
-              fullWidth
-              style={{ marginBottom: 20 }}
-              onClick={() => setFilterNodeType('guide')}>
-              Справочники
-            </Button>
-            <Button
-              fullWidth
-              style={{ marginBottom: 20 }}
-              onClick={() => setFilterNodeType('sections')}>
-              Разделы
-            </Button>
-            <Button fullWidth style={{ marginBottom: 20 }} onClick={() => setFilterNodeType(null)}>
-              Всё вместе
-            </Button>
+            {[
+              { label: 'Справочники', filterType: 'guide' },
+              { label: 'Разделы', filterType: 'section' },
+              { label: 'Всё вместе', filterType: 'all' },
+            ].map(({ label, filterType }) => (
+              <Button
+                fullWidth
+                style={{
+                  marginBottom: 20,
+                  backgroundColor:
+                    filterNodeType === filterType
+                      ? theme.palette.secondary.main
+                      : theme.palette.primary.moreLighter,
+                }}
+                onClick={() => filterNodes(filterType)}>
+                {label}
+              </Button>
+            ))}
           </div>
         </div>
         <div className='flow-canvas' id='dag-canvas'></div>
       </div>
       {currentForm === 'guide' ? (
         <BaseModal isOpen={openFirstModal} onClose={handleFirstModalClose}>
-          <FirstBlockForm field={activeField} onSubmit={saveFieldSettings} />
+          <FirstBlockForm
+            fieldIndex={activeFieldIndex}
+            id={activeNodeId}
+            onSubmit={saveFieldSettings}
+          />
         </BaseModal>
       ) : (
         <BaseModal isOpen={openSecondModal} onClose={handleSecondModalClose}>
-          <SecondBlockForm field={activeFieldIndex} onSubmit={saveFieldSettings} />
+          <SecondBlockForm
+            fieldIndex={activeFieldIndex}
+            id={activeNodeId}
+            onSubmit={saveFieldSettings}
+          />
         </BaseModal>
       )}
     </div>

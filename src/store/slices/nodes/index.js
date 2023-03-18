@@ -24,15 +24,15 @@ export const nodesSlice = createSlice({
     },
 
     addField(state, action) {
-      state.nodes[action.payload.id].data.content.push(action.payload.field);
+      state.nodes[action.payload.id].childData.push(action.payload.field);
     },
 
     editField(state, action) {
-      state.nodes[action.payload.id].data.content[action.payload.fieldIndex] = { ...state.nodes[action.payload.id].data.content[action.payload.fieldIndex], ...action.payload.field };
+      state.nodes[action.payload.id].childData[action.payload.fieldIndex] = { ...state.nodes[action.payload.id].childData[action.payload.fieldIndex], ...action.payload.field };
     },
 
     deleteField(state, action) {
-      state.nodes[action.payload.id].data.content.splice(action.payload.fieldIndex, 1);
+      state.nodes[action.payload.id].childData.splice(action.payload.fieldIndex, 1);
     },
 
     loadRawNodes(state, action) {

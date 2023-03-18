@@ -17,13 +17,13 @@ import CustomCheckbox from '../CustomCheckbox';
 
 import style from './index.module.scss';
 import { useSelector } from 'react-redux';
-import { selectSecondNodes } from '../../store/slices/nodes/selectors';
+import { selectNodes, selectSecondNodes } from '../../store/slices/nodes/selectors';
 import { INITIAL_FIRST_NODES } from '../../store/slices/nodes';
 import { SmallButtonWide } from '../SmallButton';
 
 import './mui-overrides.css';
 
-const SecondBlockForm = ({ field, onSubmit }) => {
+const SecondBlockForm = ({ fieldIndex, id, onSubmit }) => {
   const theme = useTheme();
 
   const InputProps = {
@@ -72,20 +72,23 @@ const SecondBlockForm = ({ field, onSubmit }) => {
     'Кнопочный список',
   ];
 
+  const field = useSelector(selectNodes).find((node) => node.id === id).childData[fieldIndex];
 
   const [selectFieldType, setSelectFieldType] = useState(
-    field.fieldType || selectValues[0],
+    field.options ? field.options.fieldType : selectValues[0],
   );
 
-  const [name, setName] = useState(field.content || '');
+  const [name, setName] = useState(field.name || '');
 
   const [nameEng, setNameEng] = useState(field.nameEng || '');
 
   const [checkboxes, setCheckboxes] = useState(
-    field.checkboxes ? field.checkboxes : initialCheckboxes,
+    field.options ? field.options.checkboxes : initialCheckboxes,
   );
 
-  const [selectDimension, setSelectDimension] = useState(field.dimension || 1);
+  const [selectDimension, setSelectDimension] = useState(
+    field.options ? field.options.dimension : 1,
+  );
   const dimensions = new Array(12).fill(null).map((_, i) => i + 1);
 
   return (
@@ -227,15 +230,7 @@ const SecondBlockForm = ({ field, onSubmit }) => {
         </div>
       </div>
       <SmallButtonWide
-        onClick={() =>
-          onSubmit(
-            name,
-            nameEng,
-            selectFieldType,
-            selectDimension,
-            checkboxes,
-          )
-        }
+        onClick={() => onSubmit({ name, nameEng, selectFieldType, selectDimension, checkboxes })}
         style={{ marginLeft: 'auto', display: 'block' }}>
         Сохранить
       </SmallButtonWide>

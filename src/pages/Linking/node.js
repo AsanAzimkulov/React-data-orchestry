@@ -26,8 +26,10 @@ export class PositioningSystem {
 
   getNextCoords() {
 
-    const canvasWidth = document.querySelector('.butterfly-selected-canvas').getAttribute('width');
-    const canvasHeight = document.querySelector('.butterfly-selected-canvas').getAttribute('height');
+    // const canvasWidth = document.querySelector('.butterfly-selected-canvas').getAttribute('width');
+    // const canvasHeight = document.querySelector('.butterfly-selected-canvas').getAttribute('height');
+    const canvasWidth = window.innerWidth - 302;
+    const canvasHeight = window.innerHeight;
 
     if (((this.cords.y + this.verticalShift) > canvasHeight) && (this.cords.x + this.horizontalShift + this.nodeWidth) > canvasWidth) {
       this.cords.y = this.initialCords.y;
@@ -69,12 +71,12 @@ class BaseNode extends Node {
   constructor(opts) {
     super(opts);
     // Redux StateInterface
-    this.addfield = opts.addfield;
-    this.editfield = opts.editfield;
-    this.deletefield = opts.deletefield
+    this.addField = opts.addField;
+    this.editField = opts.editField;
+    this.deleteField = opts.deleteField
     // 
     this.options = opts;
-    this.childData = opts.data.content;
+    this.childData = opts.childData;
   }
   draw = (opts) => {
     const _this = this;
@@ -116,7 +118,7 @@ class BaseNode extends Node {
         const fieldNumber = _this.dom.querySelectorAll('.content').length + 1
         const name = `Пункт ${_this.options.type === 'guide' ? 'справочника' : 'раздела'} ` + fieldNumber;
 
-        _this._onAddField(name);
+        _this._onAddNode(name);
       }
     });
 
@@ -125,7 +127,7 @@ class BaseNode extends Node {
       const value = e.target.closest('.addInput').querySelector('input').value;
       e.target.closest('.addInput').querySelector('input').value = '';
 
-      _this._onAddField(value);
+      _this._onAddNode(value);
     });
     // this._createChildNode(addInput);
     // this._onRemovedNode(title, true);
@@ -134,12 +136,12 @@ class BaseNode extends Node {
   _createChildNode(dom) {
     const _this = this;
 
-    $.each(this.childData, (i, { id, content, sourceNodeId, targetNodeId }) => {
+    $.each(this.childData, (i, { id, name, sourceNodeId, targetNodeId }) => {
       dom.append(`
       <div class="content" data-id="${id}" source-id="${sourceNodeId}" target-id="${targetNodeId}">
         <div class="targetEndPoint butterflie-circle-endpoint" id="${targetNodeId}"></div>
         <span class="remove"><i class="iconfont">&#xe654;</i></span>
-        <span class="text">${content}</span>
+        <span class="text">${name}</span>
         <span class="edit"><i class="iconfont">&#xe66d;</i></span>
         <div class="sourceEndPoint butterflie-circle-endpoint" id="${sourceNodeId}"></div>
       </div>`);
@@ -182,6 +184,7 @@ class BaseNode extends Node {
         dom: document.getElementById(targetNodeId),
       });
     }));
+    this.emit('node-mounted', this.id);
   }
 
   _onRemovedNode(dom, fullRemove) {
@@ -199,7 +202,7 @@ class BaseNode extends Node {
       if (fullRemove) {
         _this.options.deleteNode(_this.id);
       } else {
-        _this.options.deletefield(_this.id, $(this).index() - 1);
+        _this.options.deleteField(_this.id, $(this).index() - 1);
         if (!_this.dom.querySelector('.content')) {
           _this.dom.querySelector('.addInput').classList.add('noFields');
         }
@@ -225,7 +228,7 @@ class BaseNode extends Node {
 
             oldNode.text(oldInputText);
 
-            _this.childData[fieldIndex] = { ..._this.childData[fieldIndex], content: oldInputText };
+            _this.childData[fieldIndex] = { ..._this.childData[fieldIndex], name: oldInputText };
             _this.editField(_this.id, fieldIndex, _this.childData[fieldIndex]);
           }
         });
@@ -234,7 +237,7 @@ class BaseNode extends Node {
   }
 
   _generateChildData(name) {
-    const nodes = window.myCanv.getDataMap().nodes;
+    const nodes = window.myCanv.canv.getDataMap().nodes;
     let lastIdSection = 3 * (nodes.reduce((acc, cur) => {
       return cur.childData.length + acc
     }, 0));
@@ -248,7 +251,7 @@ class BaseNode extends Node {
       id: 'field-' + numId,
       sourceNodeId: 'source-endpoint-' + numSourceNodeId,
       targetNodeId: 'target-endpoint-' + numTargetNodeId,
-      content: name,
+      name,
     };
   }
 
@@ -257,7 +260,7 @@ class BaseNode extends Node {
     const fieldNumber = _this.dom.querySelectorAll('.content').length + 1
     const name = (value.length === 0 ? `Пункт ${_this.options.type === 'guide' ? 'справочника' : 'раздела'} ` + (fieldNumber) : value);
 
-    const fieldData = _this.generateChildData(name, _this.options.id);
+    const fieldData = _this._generateChildData(name, _this.options.id);
 
     $(_this.dom).find('.addInput').before(`
         <div class="content" data-id="${fieldData.id}" source-id="${fieldData.sourceNodeId}" target-id="${fieldData.targetNodeId}">
@@ -288,18 +291,17 @@ class BaseNode extends Node {
     }));
     setTimeout(() => console.log('fjdk', this), 2000)
 
-
-    this._onRemovedNode($(this.dom).find('.content').eq(fieldNumber));
+    this._onRemovedNode($(this.dom).find('.content').eq(fieldNumber - 1));
 
     $(this.dom).find(`div[data-id=${fieldData.id}]`).on('click', function (e) {
       if (!e.target.classList.contains('remove') && !e.target.classList.contains('iconfont')) {
-        _this.options.onClickField(_this.id, $(this).index() - 1);
+        _this.options.onClickField(_this.id, $(this).index() - 1, _this.options.type);
       }
     })
 
   }
 
-  updateNode(index, value) {
+  updateField(index, value) {
     const field = $(this.dom).find('.text').eq(index);
     field.text(value);
 
