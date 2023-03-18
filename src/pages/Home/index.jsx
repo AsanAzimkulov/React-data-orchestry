@@ -47,7 +47,7 @@ const Home = () => {
     dispatch(
       loadRawNodes([
         ...guides.map((guide) => ({ name: guide, type: 'guide' })),
-        ...sections((section) => ({ name: section, type: 'section' })),
+        ...sections.map((section) => ({ name: section, type: 'section' })),
       ]),
     );
     setTimeout(() => history.push('/linking'), 300);
@@ -65,10 +65,10 @@ const Home = () => {
               Справочники
             </Typography>
             <FormItems
-              onRemove={onRemoveSection}
-              onAdd={onAddSection}
+              onRemove={onRemoveGuide}
+              onAdd={onAddGuide}
               items={guides}
-              setItems={onAddSection}
+              setItems={onAddGuide}
             />
           </div>
           <div className={style['right']} style={columnStyle}>

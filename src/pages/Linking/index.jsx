@@ -21,11 +21,6 @@ import './index.css';
 import './iconfont.css';
 import 'butterfly-dag/dist/index.css';
 import { BaseNode, PositioningSystem } from './node';
-import {
-  addSectionChildNode,
-  editSection,
-  removeSectionChildNode,
-} from '../../store/slices/sections';
 import BaseModal from '../../components/Modal';
 import FirstBlockForm from '../../components/FirstBlockForm';
 import {
@@ -35,6 +30,7 @@ import {
   deleteField,
   editNode,
   editField,
+  addNodes,
 } from '../../store/slices/nodes';
 import SecondBlockForm from '../../components/SecondBlockForm';
 import { selectNodes, selectRawNodes } from '../../store/slices/nodes/selectors';
@@ -53,6 +49,9 @@ const Linking = () => {
   const handleFirstModalClose = () => setOpenFirstModal(false);
   const handleSecondModalClose = () => setOpenSecondModal(false);
 
+  const [filterNodeType, setFilterNodeType] = useState('guide');
+  window.myCanv.nodesFilterType = filterNodeType;
+
   const [activeNodeId, setActiveNodeId] = useState();
   const [activeFieldIndex, setActiveFieldIndex] = useState();
 
@@ -60,26 +59,18 @@ const Linking = () => {
 
   const [currentForm, setCurrentForm] = useState(1);
 
-  const guidesPos = new PositioningSystem();
-  const sectionsPos = new PositioningSystem();
-
   const data = {
     nodes: rawNodes.map(({ name, type }, i) => {
-      let coords;
-
-      if (type === 'guide') {
-        coords = guidesPos.getNextCoords();
-      } else {
-        coords = sectionsPos.getNextCoords();
-      }
-
       return {
         id: i,
         name,
         type,
-        top: coords.y,
-        left: coords.x,
-        class: BaseNode,
+        data: {
+          content: [],
+        },
+        top: 0,
+        left: 0,
+        Class: BaseNode,
 
         onClickField(id, fieldIndex, type) {
           setActiveFieldIndex(id);
@@ -126,6 +117,10 @@ const Linking = () => {
   // Первая загрузка
 
   useEffect(() => {
+    dispatch(
+      addNodes({ nodes: data.nodes.map(({ id, name, type, data }) => ({ id, name, type, data })) }),
+    );
+
     let root = document.getElementById('dag-canvas');
     let canvas = canvasRef.current;
 
@@ -187,9 +182,21 @@ const Linking = () => {
       <div className={style.wrapper}>
         <div className={style.sideBarWrapper}>
           <div className={style.sideBar} style={{ backgroundColor: theme.palette.primary.main }}>
-            <Typography variant='h2' style={{ marginBottom: 24 }}>
+            <Button
+              fullWidth
+              style={{ marginBottom: 20 }}
+              onClick={() => setFilterNodeType('guide')}>
               Справочники
-            </Typography>
+            </Button>
+            <Button
+              fullWidth
+              style={{ marginBottom: 20 }}
+              onClick={() => setFilterNodeType('sections')}>
+              Разделы
+            </Button>
+            <Button fullWidth style={{ marginBottom: 20 }} onClick={() => setFilterNodeType(null)}>
+              Всё вместе
+            </Button>
           </div>
         </div>
         <div className='flow-canvas' id='dag-canvas'></div>

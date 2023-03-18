@@ -6,4 +6,9 @@ export const store = configureStore({
   reducer: {
     nodes: nodesSlice.reducer,
   },
+  preloadedState: {
+    nodes: {
+      nodes: []
+    }
+  }
 });

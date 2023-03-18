@@ -108,24 +108,24 @@
   display: none;
 }
 
-.flow-canvas .addInput.noSubnodes .caption {
+.flow-canvas .addInput.noFields .caption {
   display: none;
 }
 
-.flow-canvas .addInput.noSubnodes .caption {
+.flow-canvas .addInput.noFields .caption {
   display: block;
 }
 
-.flow-canvas .addInput.noSubnodes {
+.flow-canvas .addInput.noFields {
   justify-content: flex-start;
   cursor: pointer;
 }
 
-.flow-canvas .addInput.noSubnodes input {
+.flow-canvas .addInput.noFields input {
   display: none;
 }
 
-.flow-canvas .addInput.noSubnodes .addButton {
+.flow-canvas .addInput.noFields .addButton {
   margin-left: 19px;
   margin-right: 6px;
   padding: 0;
