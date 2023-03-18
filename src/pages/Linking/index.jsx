@@ -284,7 +284,6 @@ const Linking = () => {
       ) : (
         <BaseModal isOpen={openSecondModal} onClose={handleSecondModalClose}>
           <SecondBlockForm
-            fieldParentType={filterNodeType}
             id={activeNodeId}
             fieldIndex={activeFieldIndex}
             onSubmit={saveFieldSettings}

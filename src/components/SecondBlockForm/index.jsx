@@ -23,7 +23,7 @@ import { SmallButtonWide } from '../SmallButton';
 
 import './mui-overrides.css';
 
-const SecondBlockForm = ({ fieldParentType, fieldIndex, id, onSubmit }) => {
+const SecondBlockForm = ({ fieldIndex, id, onSubmit }) => {
   const theme = useTheme();
 
   const InputProps = {
@@ -72,7 +72,8 @@ const SecondBlockForm = ({ fieldParentType, fieldIndex, id, onSubmit }) => {
     'Кнопочный список',
   ];
 
-  const field = useSelector(selectNodes).find((node) => node.id === id).childData[fieldIndex];
+  const parentNode = useSelector(selectNodes).find((node) => node.id === id);
+  const field = parentNode.childData[fieldIndex];
 
   const [selectFieldType, setSelectFieldType] = useState(
     field.options ? field.options.fieldType : selectValues[0],
@@ -101,7 +102,7 @@ const SecondBlockForm = ({ fieldParentType, fieldIndex, id, onSubmit }) => {
           <Typography
             variant='subtitle1'
             style={{ color: 'rgba(255, 255, 255, 0.6)', marginBottom: '5px', display: 'block' }}>
-            Название Пункта {fieldParentType === 'guide' ? 'Справочника' : 'Раздела'}:
+            Название Пункта {parentNode.type === 'guide' ? 'Справочника' : 'Раздела'}:
           </Typography>
           <TextField
             value={name}

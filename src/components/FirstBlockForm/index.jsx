@@ -69,7 +69,7 @@ const FirstBlockForm = ({ id, onSubmit }) => {
           <Typography
             variant='subtitle1'
             style={{ color: 'rgba(255, 255, 255, 0.6)', marginBottom: '5px', display: 'block' }}>
-            Название пункта справочника:
+            Название {node.type === 'guide' ? 'Справочника' : 'Раздела'}:
           </Typography>
           <TextField
             InputProps={InputProps}
